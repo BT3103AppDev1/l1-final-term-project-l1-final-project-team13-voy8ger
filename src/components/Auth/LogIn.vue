@@ -69,7 +69,7 @@
                       else {
                           await signInWithEmailAndPassword(auth,this.email, this.password)
                       .then((UserCredential) => {
-                      // check if user has been verified or not
+                      // check if user has been verified or not before letting them to log in
                       this.isEmailVerified = UserCredential.user.emailVerified;
                       this.loginAttempted = true;
 

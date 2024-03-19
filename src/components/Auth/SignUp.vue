@@ -91,6 +91,7 @@ import { ref } from 'vue'
                   this.$toast.error(`There is some issues with the sign up`);
                   });
 
+                  // send email Verification to user
                   await sendEmailVerification(this.user);
                 }
                 } 
