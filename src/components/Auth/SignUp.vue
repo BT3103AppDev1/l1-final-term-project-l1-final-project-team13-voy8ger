@@ -36,7 +36,7 @@
 
 <script>
 import { app } from '../../firebase.js'; // Import your Firebase app instance
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { ref } from 'vue' 
 
     export default {
@@ -47,7 +47,8 @@ import { ref } from 'vue'
                 password: '',
                 confirmedPassword: '',
                 error: '',
-                showError: true
+                showError: true,
+                user: ''
             };
         },
         methods: {
@@ -74,18 +75,23 @@ import { ref } from 'vue'
                   // if no errors/things to flag in user input
                   else {
                       await createUserWithEmailAndPassword(auth,this.email, this.password, this.confirmedPassword)
-                  .then(() => {
+                  .then((userCred) => {
+                  // store user details
+                  this.user = userCred.user;
+
                   // Sign up successful
                   this.$toast.success(`Sign up has been successful`);
                   // shows the sign up has been successful for 1 seconds before going to home page
                   setTimeout(() => {
-                    this.$router.push({ name: 'Login' });
+                    this.$router.push({ name: 'LogIn' });
                   }, 2000);
                   })
                   .catch(error => {
                   // Handle sign up error
                   this.$toast.error(`There is some issues with the sign up`);
                   });
+
+                  await sendEmailVerification(this.user);
                 }
                 } 
                 // catch the error

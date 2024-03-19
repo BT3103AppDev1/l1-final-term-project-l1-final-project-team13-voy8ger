@@ -39,7 +39,10 @@
                     email: '',
                     password: '',
                     error: '',
-                    showError: true
+                    showError: true,
+                    // for email verification
+                    isEmailVerified: false,
+                    loginAttempted: false
                 };
             },
             methods: {
@@ -65,17 +68,25 @@
                       // if no errors/things to flag in user input
                       else {
                           await signInWithEmailAndPassword(auth,this.email, this.password)
-                      .then(() => {
-                      // Sign in successful
-                      this.$toast.success(`Sign in has been successful`);
-                      // shows the sign in has been successful for 1 seconds before going to home page
-                      setTimeout(() => {
+                      .then((UserCredential) => {
+                      // check if user has been verified or not
+                      this.isEmailVerified = UserCredential.user.emailVerified;
+                      this.loginAttempted = true;
+
+                      if(this.isEmailVerified) {
+                        // Sign in successful
+                        this.$toast.success(`Sign in has been successful`);
+                        // shows the sign in has been successful before going to home page
                         this.$router.push({ name: 'Home' });
-                      }, 1000);
+                      } else {
+                        this.$toast.error(`Please verify your email`);
+                      }
+                      
                       
                       })
                       .catch(error => {
                       // Handle login error
+                      console.log(error);
                       this.$toast.error(`There is some issues with the sign in`);
                       });
                     }
