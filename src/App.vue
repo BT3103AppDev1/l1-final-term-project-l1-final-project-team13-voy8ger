@@ -7,9 +7,9 @@
 
 <script>
 
-  import SignUp from './components/Auth/SignUp.vue';
-  import LogIn from './components/Auth/LogIn.vue';
-  import Home from './components/Home.vue';
+  import SignUp from './views/Auth/SignUp.vue';
+  import LogIn from './views/Auth/LogIn.vue';
+  import Home from './views/Home.vue';
 
   export default {
     name: 'App',
@@ -21,5 +21,5 @@
   }
 </script>
 
-<style scoped>
-</style>
+<!-- <style scoped>
+</style> -->
