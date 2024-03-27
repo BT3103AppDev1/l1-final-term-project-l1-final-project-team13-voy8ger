@@ -7,7 +7,7 @@ defineProps({
     logo: String,
     route: "",
     default: () => ({
-      name: "Material Kit 2",
+      name: "VOY8GER",
       logo: logoDark,
       route: "/",
     }),
@@ -55,10 +55,13 @@ defineProps({
             name: "about us",
             href: "https://www.creative-tim.com/presentation",
           },
+
+          /*
           {
             name: "freebies",
             href: "https://www.creative-tim.com/templates/free",
           },
+          */
           {
             name: "premium tools",
             href: "https://www.creative-tim.com/templates/premium",
@@ -69,11 +72,16 @@ defineProps({
       {
         name: "resources",
         items: [
+
+          /*
           { name: "illustrations", href: "https://iradesign.io/" },
+
           {
             name: "bits & snippets",
             href: "https://www.creative-tim.com/bits",
           },
+          */
+
           {
             name: "affiliate program",
             href: "https://www.creative-tim.com/affiliates/new",
@@ -171,9 +179,9 @@ defineProps({
             <p class="text-dark my-4 text-sm font-weight-normal">
               All rights reserved. Copyright ©
               {{ new Date().getFullYear() }}
-              Material Kit by
+              VOY8GER by
               <a href="https://www.creative-tim.com" target="_blank"
-                >Creative Tim</a
+                >BT3103 Team 13</a
               >.
             </p>
           </div>
