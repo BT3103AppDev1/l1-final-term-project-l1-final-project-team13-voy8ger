@@ -1,15 +1,23 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router/index.js'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
 import Toaster from "@meforma/vue-toaster";
+import App from "./App.vue";
+import router from "./router/index.js";
+import materialKit from "./material-kit";
 
-const app = createApp(App)
+// Nucleo Icons
+import "./assets/css/nucleo-icons.css";
+import "./assets/css/nucleo-svg.css";
 
-app.use(router)
+const app = createApp(App);
+
+app.use(createPinia());
+app.use(router);
+app.use(materialKit);
 app.use(Toaster, {
-    position: "top",
-    dismissable: "true",
-    maxToasts: 2
-})
+  position: "top",
+  dismissable: "true",
+  maxToasts: 2,
+});
 
-app.mount('#app')
+app.mount("#app");
