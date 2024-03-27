@@ -117,7 +117,7 @@ watch(
         ]"
         :to="{ name: 'Home' }"
         rel="tooltip"
-        title="Designed and Coded by Creative Tim"
+        title="Designed and Coded by VOY8GER"
         data-placement="bottom"
       >
         Y O Y 8 G E R
