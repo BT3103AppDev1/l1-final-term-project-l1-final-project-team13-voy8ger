@@ -10,13 +10,15 @@
   import SignUp from './views/Auth/SignUp.vue';
   import LogIn from './views/Auth/LogIn.vue';
   import Home from './views/Home.vue';
+  import Profile from './views/Profile.vue';
 
   export default {
     name: 'App',
     components: {
       SignUp,
       LogIn,
-      Home
+      Home,
+      Profile
     }
   }
 </script>

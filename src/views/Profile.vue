@@ -15,7 +15,8 @@
 
 <script>
 export default {
-  data() {
+    name: "Profile",
+    data() {
     return {
       user: {
         name: "John Doe",
@@ -27,6 +28,9 @@ export default {
         ],
       },
     };
+  },
+  components: {
+    // Add your components here
   },
 };
 </script>
