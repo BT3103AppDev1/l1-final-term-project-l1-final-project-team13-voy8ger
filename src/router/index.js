@@ -4,6 +4,7 @@ import LogIn from "../views/Auth/LogIn.vue";
 import Home from "../views/Home.vue";
 import Profile from "../views/Profile.vue";
 import Explore from "../views/Explore.vue";
+import Favourites from "../views/Favourites.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,7 +38,11 @@ const router = createRouter({
       path: "/",
       name: "Home",
       component: Home,
-    },
+    }, {
+      path:"/favourites",
+      name: "Favourites",
+      component: Favourites
+    }
   ],
 });
 

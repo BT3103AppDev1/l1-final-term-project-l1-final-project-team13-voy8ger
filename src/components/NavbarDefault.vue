@@ -170,8 +170,11 @@ watch(
             </a>
           </li>
           <li class="nav-item dropdown dropdown-hover mx-2">
-            <a
-              href="https://www.github.com/creativetimofficial/vue-material-kit"
+            <RouterLink
+              :to="{ name: 'Favourites' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
+              data-placement="bottom"
               class="nav-link d-flex cursor-pointer align-items-center"
             >
               <svg
@@ -188,7 +191,7 @@ watch(
                 ></path>
               </svg>
               Favourites
-            </a>
+            </RouterLink>
           </li>
           <li class="nav-item dropdown dropdown-hover mx-2">
             <RouterLink

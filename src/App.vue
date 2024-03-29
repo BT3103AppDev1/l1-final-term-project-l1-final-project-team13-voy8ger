@@ -11,6 +11,7 @@
   import LogIn from './views/Auth/LogIn.vue';
   import Home from './views/Home.vue';
   import Profile from './views/Profile.vue';
+  import Favourites from "./views/Favourites.vue";
 
   export default {
     name: 'App',
@@ -18,7 +19,8 @@
       SignUp,
       LogIn,
       Home,
-      Profile
+      Profile,
+      Favourites
     }
   }
 </script>
