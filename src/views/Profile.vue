@@ -8,7 +8,9 @@
   </div>
   <div class="page-header min-vh-90" loading="lazy">
     <v-container>
-      <div class="d-flex flex-row align-items-center mb-3">
+      <div
+        class="d-flex flex-row justify-content-between align-items-center mb-3"
+      >
         <div class="d-flex flex-column">
           <v-avatar size="100" class="mb-2">
             <img
@@ -26,17 +28,15 @@
           <div class="p-2">5</div>
           <h6>favourited</h6>
         </div>
-        <v-row justify="center" class="mt-5">
-          <v-col cols="12" sm="6" md="4">
-            <v-text-field
-              v-model="search"
-              prepend-inner-icon="mdi-magnify"
-              label="Search Created"
-              variant="outlined"
-              clearable
-            ></v-text-field>
-          </v-col>
-        </v-row>
+        <div class="w-50 p-2">
+          <v-text-field
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+            label="Search Created"
+            variant="outlined"
+            clearable
+          ></v-text-field>
+        </div>
       </div>
       <div class="profile">
         <p>{{ user.bio }}</p>
