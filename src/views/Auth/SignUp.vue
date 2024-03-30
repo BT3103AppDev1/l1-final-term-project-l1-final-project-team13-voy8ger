@@ -184,7 +184,7 @@ export default {
             });
 
           // set the user details into the firestore database
-          const docRef = await setDoc(doc(db, "Users", this.name), {
+          const docRef = await setDoc(doc(db, "Users", this.email), {
             Name:this.name,
             email:this.email,
             plans_list:[],
