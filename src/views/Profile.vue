@@ -1,4 +1,11 @@
 <template>
+  <div class="container position-sticky z-index-sticky top-0">
+    <div class="row">
+      <div class="col-12">
+        <NavbarDefault :sticky="true" />
+      </div>
+    </div>
+  </div>
   <div class="profile">
     <h1>{{ user.name }}</h1>
     <p>{{ user.bio }}</p>
@@ -11,20 +18,26 @@
       </ul>
     </div>
   </div>
+  <DefaultFooter />
 </template>
+
+<script setup>
+import NavbarDefault from "../components/NavbarDefault.vue";
+import DefaultFooter from "../components/FooterDefault.vue";
+</script>
 
 <script>
 export default {
-    name: "Profile",
-    data() {
+  name: "Profile",
+  data() {
     return {
       user: {
         name: "John Doe",
         bio: "I'm a software developer",
         posts: [
-          { id: 1, content: "Hello, world!" },
-          { id: 2, content: "Just had a great day!" },
-          { id: 3, content: "Working on a new project" },
+          { id: 1, content: "Plans 1" },
+          { id: 2, content: "Plans 2" },
+          { id: 3, content: "Plans 3" },
         ],
       },
     };
