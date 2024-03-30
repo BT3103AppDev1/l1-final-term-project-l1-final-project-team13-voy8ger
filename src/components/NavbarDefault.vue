@@ -264,13 +264,13 @@ watch(
                         :to="{ name: 'Home' }"
                         class="dropdown-item border-radius-md"
                       >
-                        <span>Contact Us</span>
+                        <span>Author</span>
                       </RouterLink>
-                      <RouterLink
-                        :to="{ name: 'Home' }"
+                      <RouterLink 
+                        :to="{ name: 'CreatePlan' }"
                         class="dropdown-item border-radius-md"
                       >
-                        <span>Author</span>
+                        <span>Create Plan</span>
                       </RouterLink>
                       <div
                         class="dropdown-header text-dark font-weight-bolder d-flex align-items-center px-0 mt-3"

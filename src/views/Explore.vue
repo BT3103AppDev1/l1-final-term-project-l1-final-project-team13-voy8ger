@@ -29,89 +29,148 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
-    <div
-      class="page-header min-vh-90"
-      
-      loading="lazy"
-    >
+  <div class="page-header min-vh-90" loading="lazy">
     <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
       <h1
-              class="text-black pt-3 mt-n5 me-2 text-center"
-              :style="{ display: 'inline-block '}"
+        class="text-black pt-3 mt-n5 me-2 text-center"
+        :style="{ display: 'inline-block ' }"
+      >
+        Find plans you love!
+      </h1>
+      <v-row align="center" justify="center">
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 1</v-card-title
             >
-            Find plans you love!
-            </h1>
-    <v-row align="center" justify="center">
-
-  <v-col cols="auto">
-  <v-card class="mx-auto" max-width="344" >
-    <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 1</v-card-title>
-    <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-  </v-card>
-</v-col>
-  <v-col cols="auto">
-    
-  <v-card class="mx-auto" max-width="344" >
-    <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 2</v-card-title>
-    <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-  </v-card>
-</v-col>
-  <v-col cols="auto">
-    
-  <v-card class="mx-auto" max-width="344" >
-    <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 3</v-card-title>
-    <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-  </v-card>
-</v-col>
-  </v-row>
-  <v-row align="center" justify="center">
-
-<v-col cols="auto">
-<v-card class="mx-auto" max-width="344" >
-  <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 1</v-card-title>
-  <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-</v-card>
-</v-col>
-<v-col cols="auto">
-  
-<v-card class="mx-auto" max-width="344" >
-  <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 2</v-card-title>
-  <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-</v-card>
-</v-col>
-<v-col cols="auto">
-  
-<v-card class="mx-auto" max-width="344" >
-  <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 3</v-card-title>
-  <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-</v-card>
-</v-col>
-</v-row>
-<v-row align="center" justify="center">
-
-<v-col cols="auto">
-<v-card class="mx-auto" max-width="344" >
-  <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 1</v-card-title>
-  <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-</v-card>
-</v-col>
-<v-col cols="auto">
-  
-<v-card class="mx-auto" max-width="344" >
-  <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 2</v-card-title>
-  <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-</v-card>
-</v-col>
-<v-col cols="auto">
-  
-<v-card class="mx-auto" max-width="344" >
-  <v-card-title prepend-icon="mdi-account" append-icon="mdi-check" class="text-center">Plan 3</v-card-title>
-  <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</v-card-text>
-</v-card>
-</v-col>
-</v-row>
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 2</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 3</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row align="center" justify="center">
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 1</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 2</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 3</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row align="center" justify="center">
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 1</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 2</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+        <v-col cols="auto">
+          <v-card class="mx-auto" max-width="344">
+            <v-card-title
+              prepend-icon="mdi-account"
+              append-icon="mdi-check"
+              class="text-center"
+              >Plan 3</v-card-title
+            >
+            <v-card-text
+              >Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod.</v-card-text
+            >
+          </v-card>
+        </v-col>
+      </v-row>
     </div>
-    </div>
+  </div>
 
   <DefaultFooter />
 </template>
