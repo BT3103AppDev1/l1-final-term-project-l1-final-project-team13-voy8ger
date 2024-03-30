@@ -43,7 +43,7 @@ const router = createRouter({
       path:"/favourites",
       name: "Favourites",
       component: Favourites
-    }
+    },
     {
       path: "/prfle/createplan",
       name: "CreatePlan",

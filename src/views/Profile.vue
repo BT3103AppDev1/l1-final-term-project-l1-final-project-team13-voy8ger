@@ -6,17 +6,50 @@
       </div>
     </div>
   </div>
-  <div class="profile">
-    <h1>{{ user.name }}</h1>
-    <p>{{ user.bio }}</p>
-    <div class="posts">
-      <h2>Posts</h2>
-      <ul>
-        <li v-for="post in user.posts" :key="post.id">
-          {{ post.content }}
-        </li>
-      </ul>
-    </div>
+  <div class="page-header min-vh-90" loading="lazy">
+    <v-container>
+      <div class="d-flex flex-row align-items-center mb-3">
+        <div class="d-flex flex-column">
+          <v-avatar size="100" class="mb-2">
+            <img
+              src="https://cdn.vuetifyjs.com/images/john.jpg"
+              alt="John Doe"
+            />
+          </v-avatar>
+          <h4>{{ user.name }}</h4>
+        </div>
+        <div class="d-flex flex-column align-items-center p-2">
+          <div class="p-2">3</div>
+          <h6>created</h6>
+        </div>
+        <div class="d-flex flex-column align-items-center p-2">
+          <div class="p-2">5</div>
+          <h6>favourited</h6>
+        </div>
+        <v-row justify="center" class="mt-5">
+          <v-col cols="12" sm="6" md="4">
+            <v-text-field
+              v-model="search"
+              prepend-inner-icon="mdi-magnify"
+              label="Search Created"
+              variant="outlined"
+              clearable
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </div>
+      <div class="profile">
+        <p>{{ user.bio }}</p>
+        <div class="posts">
+          <h2>Posts</h2>
+          <ul>
+            <li v-for="post in user.posts" :key="post.id">
+              {{ post.content }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </v-container>
   </div>
   <DefaultFooter />
 </template>
@@ -27,7 +60,7 @@ import { db } from "../firebase.js";
 
 import { onMounted, onUnmounted } from "vue";
 import { RouterLink } from "vue-router";
-import '@mdi/font/css/materialdesignicons.css'
+import "@mdi/font/css/materialdesignicons.css";
 
 import {
   getFirestore,
