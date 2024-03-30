@@ -21,11 +21,11 @@
           <h4>{{ user.name }}</h4>
         </div>
         <div class="d-flex flex-column align-items-center p-2">
-          <div class="p-2">3</div>
+          <div class="p-2">{{ this.user.plans.length }}</div>
           <h6>created</h6>
         </div>
         <div class="d-flex flex-column align-items-center p-2">
-          <div class="p-2">5</div>
+          <div class="p-2">{{ this.user.saved.length }}</div>
           <h6>favourited</h6>
         </div>
         <div class="w-50 p-2">
@@ -40,14 +40,47 @@
       </div>
       <div class="profile">
         <p>{{ user.bio }}</p>
-        <div class="posts">
-          <h2>Posts</h2>
-          <ul>
-            <li v-for="post in user.posts" :key="post.id">
-              {{ post.content }}
-            </li>
-          </ul>
-        </div>
+        <v-row>
+          <v-col v-for="output in user.plans" :key="output.planId" cols="4">
+            <v-card class="mx-auto" max-width="300" max-height="250">
+              <v-img
+                height="150px"
+                src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                cover
+              ></v-img>
+
+              <v-card-title>{{ output.Plan_Name }}</v-card-title>
+
+              <v-row align="center">
+                <v-col cols="6">
+                  <v-card-text>{{ output.num_likes }} likes</v-card-text>
+                  <v-card-subtitle>{{
+                    output.plan_description
+                  }}</v-card-subtitle>
+                </v-col>
+
+                <v-col cols="6">
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="error"
+                      icon
+                      size="small"
+                      variant="plain"
+                      @click="toggleHeart(output.planId)"
+                    >
+                      <v-icon>{{
+                        user.saved.includes(output.planId)
+                          ? "mdi-heart"
+                          : "mdi-heart-outline"
+                      }}</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
       </div>
     </v-container>
   </div>
@@ -81,18 +114,89 @@ export default {
   data() {
     return {
       user: {
+        id: "",
         name: "John Doe",
+        email: "",
         bio: "I'm a software developer",
-        posts: [
-          { id: 1, content: "Plans 1" },
-          { id: 2, content: "Plans 2" },
-          { id: 3, content: "Plans 3" },
-        ],
+        plans: [],
+        saved: [],
       },
+      search: "",
     };
   },
-  components: {
-    // Add your components here
+
+  async mounted() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      console.log(user);
+      if (user) {
+        this.user.email = user.email;
+        this.fetchAndUpdateData(this.user.email);
+      }
+    });
+  },
+
+  methods: {
+    async toggleHeart(planId) {
+      // get document of that user
+      const docRef = doc(db, "Users", String(this.user.email));
+      const docSnap = await getDoc(docRef);
+      if (this.user.saved.includes(planId)) {
+        // remove that plan from my favourites
+        await this.deleteListItem(docRef, docSnap, "saved_list", planId);
+      } else {
+        // add that plan to my favourites
+        await updateDoc(docRef, {
+          saved_list: [...this.user.saved, planId],
+        });
+      }
+      // refresh
+      this.user.plans = [];
+      this.fetchAndUpdateData(String(this.user.email));
+    },
+
+    async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
+      try {
+        if (docSnap.exists()) {
+          // Get the data from the document
+          const data = docSnap.data();
+          // Get the list from the document data
+          const list = data[listFieldName];
+          console.log(list);
+          // Remove the item from the list
+          const updatedList = list.filter((item) => item !== itemToRemove);
+          // Update the document with the modified list
+          await updateDoc(docRef, {
+            [listFieldName]: updatedList,
+          });
+          console.log("Item removed from the list: ", itemToRemove);
+        } else {
+          console.log("Document does not exist!");
+        }
+      } catch (error) {
+        console.error("Error removing item from list: ", error);
+      }
+    },
+
+    async fetchAndUpdateData(userEmail) {
+      // get created plan list of the user
+      const docSnap = await getDoc(doc(db, "Users", String(userEmail)));
+      this.user.id = docSnap.data().username;
+      this.user.name = docSnap.data().Name;
+      this.user.email = docSnap.data().email;
+
+      console.log("created: " + docSnap.data().plans_list);
+      console.log("saved: " + docSnap.data().saved_list);
+
+      // get all the plans out & put it into the list temp
+      const val = docSnap.data().plans_list.map(async (e) => {
+        this.user.plans.push((await getDoc(doc(db, "Plans", e))).data());
+      });
+      this.user.saved = docSnap.data().saved_list;
+
+      console.log("created temp: " + this.user.plans);
+      console.log("saved temp: " + this.user.saved);
+    },
   },
 };
 </script>
