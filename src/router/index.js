@@ -4,6 +4,7 @@ import LogIn from "../views/Auth/LogIn.vue";
 import Home from "../views/Home.vue";
 import Profile from "../views/Profile.vue";
 import Explore from "../views/Explore.vue";
+import CreatePlan from "../views/CreatePlan.vue";
 import Favourites from "../views/Favourites.vue";
 
 const router = createRouter({
@@ -42,6 +43,11 @@ const router = createRouter({
       path:"/favourites",
       name: "Favourites",
       component: Favourites
+    }
+    {
+      path: "/prfle/createplan",
+      name: "CreatePlan",
+      component: CreatePlan,
     }
   ],
 });
