@@ -22,6 +22,22 @@
 </template>
 
 <script setup>
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { db } from "../firebase.js";
+
+import { onMounted, onUnmounted } from "vue";
+import { RouterLink } from "vue-router";
+import '@mdi/font/css/materialdesignicons.css'
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
 </script>
