@@ -6,6 +6,7 @@ import Profile from "../views/Profile.vue";
 import Explore from "../views/Explore.vue";
 import CreatePlan from "../views/CreatePlan.vue";
 import Favourites from "../views/Favourites.vue";
+import SinglePlan from "@/views/SinglePlan.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +40,8 @@ const router = createRouter({
       path: "/",
       name: "Home",
       component: Home,
-    }, {
+    }, 
+    {
       path:"/favourites",
       name: "Favourites",
       component: Favourites
@@ -48,6 +50,11 @@ const router = createRouter({
       path: "/prfle/createplan",
       name: "CreatePlan",
       component: CreatePlan,
+    }, 
+    {
+      path: "/SinglePlan",
+      name: "SinglePlan",
+      component: SinglePlan
     }
   ],
 });
