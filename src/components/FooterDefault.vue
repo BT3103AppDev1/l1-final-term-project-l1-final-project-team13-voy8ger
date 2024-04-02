@@ -52,12 +52,6 @@ defineProps({
             href: "https://eatbook.sg/about-us/",
           },
 
-          /*
-          {
-            name: "freebies",
-            href: "https://www.creative-tim.com/templates/free",
-          },
-          */
           {
             name: "premium tools",
             href: "https://www.travelperk.com/business-travel/business-travel-management-global-1/?utm_source=google&utm_medium=cpc&utm_campaign=1250_G_SG_EN_GEN_PM_TravelManagement&utm_term=travel%20management%20tool&utm_content=&hl1=&gad_source=1&gclid=CjwKCAjwh4-wBhB3EiwAeJsppIfocPecGbpc2Ro-fsWhRXXjzoHtEveCvF507b--Vxwq2YbQmnd0xxoCMNYQAvD_BwE",
@@ -68,15 +62,6 @@ defineProps({
       {
         name: "resources",
         items: [
-
-          /*
-          { name: "illustrations", href: "https://iradesign.io/" },
-
-          {
-            name: "bits & snippets",
-            href: "https://www.creative-tim.com/bits",
-          },
-          */
 
           {
             name: "affiliate program",
