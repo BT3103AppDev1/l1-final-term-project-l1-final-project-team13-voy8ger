@@ -59,17 +59,6 @@ export default {
     }
   },
 
-  computed: {
-    // filter the plans based on what has been typed in the search bar
-    filterer: function() {
-      if(this.search === '') {
-        return this.temp;
-      } else {
-        return this.temp.filter(plan => plan.Plan_Name.includes(this.search))
-      }
-    }
-  },
-
   methods: {
     async toggleHeart(plan_Name) {
       // get document of that user
@@ -120,6 +109,15 @@ export default {
 
       console.log(this.temp);
     },
+
+    goToSinglePlan(planId) {
+      console.log(planId);
+      // go to the singlePlan view and send the planId
+      // so that details related to this plan can be retrived there
+      this.$router.push({ name: "SinglePlan", query: {
+        id: planId
+      } });
+    }
   },
 };
 </script>
@@ -178,7 +176,7 @@ export default {
                 <v-col cols="6">
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="orange">
+                    <v-btn color="orange" v-on:click = "goToSinglePlan(output.planId)">
                       Explore
                     </v-btn>
                     <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(output.planId)">

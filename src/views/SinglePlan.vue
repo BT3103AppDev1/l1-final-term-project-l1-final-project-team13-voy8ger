@@ -1,98 +1,28 @@
-<template>
-  <body>
-    <v-card
-    class="mx-auto my-12"
-    max-width="800"
-  >
+<script setup>
+// firebase stuff to get user data
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { db, storage } from "../firebase.js";
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 
-    <div class="gallery-wrap">
-        <img src = "../assets/img/back.png" id = "backBtn">
+// misc imports
+import { onMounted, onUnmounted } from "vue";
+import { RouterLink } from "vue-router";
+import "@mdi/font/css/materialdesignicons.css";
 
-        <div class = "gallery">
-          <div>
-            <span><img :src=this.imageLink></span>
-            <span><img :src=this.imageLink></span>
-            <span><img :src=this.imageLink></span>
-          </div>
-          <div>
-            <span><img :src=this.imageLink></span>
-            <span><img :src=this.imageLink></span>
-            <span><img :src=this.imageLink></span>
-          </div>
-        </div>
-
-        <img src = "../assets/img/next.png" id = "nextBtn">
-      </div>
-
-    <v-card-item>
-      <v-card-title>Cafe Badilico</v-card-title>
-
-      <v-card-subtitle>
-        <span class="me-1">Local Favorite</span>
-
-        <v-icon
-          color="error"
-          icon="mdi-fire-circle"
-          size="small"
-        ></v-icon>
-      </v-card-subtitle>
-    </v-card-item>
-
-    <v-card-text>
-      <v-row
-        align="center"
-        class="mx-0"
-      >
-        <v-rating
-          :model-value="4.5"
-          color="amber"
-          density="compact"
-          size="small"
-          half-increments
-          readonly
-        ></v-rating>
-
-        <div class="text-grey ms-4">
-          4.5 (413)
-        </div>
-      </v-row>
-
-      <div class="my-4 text-subtitle-1">
-        $ • Italian, Cafe
-      </div>
-
-      <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio seating.</div>
-    </v-card-text>
-
-    <v-divider class="mx-4 mb-1"></v-divider>
-
-    <v-card-title>Tonight's availability</v-card-title>
-
-    <div class="px-4">
-      <v-chip-group v-model="selection">
-        <v-chip>5:30PM</v-chip>
-
-        <v-chip>7:30PM</v-chip>
-
-        <v-chip>8:00PM</v-chip>
-
-        <v-chip>9:00PM</v-chip>
-      </v-chip-group>
-    </div>
-
-    <v-card-actions>
-      <v-btn
-        color="deep-purple-lighten-2"
-        variant="text"
-        @click="reserve"
-      >
-        Reserve
-      </v-btn>
-    </v-card-actions>
-  </v-card>
-
-  </body>
-</template>
+//example components
+import NavbarDefault from "../components/NavbarDefault.vue";
+import DefaultFooter from "../components/FooterDefault.vue";
+import Header from "../components/Header.vue";
+</script>
 
 <script>
 export default {
@@ -101,9 +31,15 @@ export default {
       // HTTPS link of your image
       imageLink: "https://cdn.vuetifyjs.com/images/cards/cooking.png",
       loading: false,
-      selection: 1
+      selection: 1,
+      plan: [],
+      imageUrls: []
     };
   }, mounted() {
+      this.UpdatePlan(this.$route.query.id);
+      this.created();
+      
+      // console.log(this.$route.query.id);
       // add all the image scrollbar functionality
       let scrollBar = document.querySelector(".gallery");
       let backBtn = document.getElementById("backBtn");
@@ -128,9 +64,131 @@ export default {
 
         setTimeout(() => (this.loading = false), 2000)
     },
-  },
+
+    async UpdatePlan(planId) {
+      // store this plan in a list
+      console.log(planId);
+      this.plan.push((await getDoc(doc(db, "Plans", planId))).data());
+      console.log(this.plan['0']);
+    },
+
+    // to get the images of the plan
+    async created() {
+      const folderRef = ref(storage, "Plans/" + String(this.$route.query.id));
+
+      try {
+        const imageList = await listAll(folderRef);
+        for (const item of imageList.items) {
+          const imageUrl = await getDownloadURL(item);
+          this.imageUrls.push(imageUrl);
+        }
+        //console.log(this.imageUrls);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      }
+    }
+  }
 };
 </script>
+
+<template>
+  <div class="container position-sticky z-index-sticky top-0">
+    <div class="row">
+      <div class="col-12">
+        <NavbarDefault :sticky="true" />
+      </div>
+    </div>
+  </div>
+
+  <body>
+    <div class="page-header min-vh-90" loading="lazy">
+    <v-card 
+    class="mx-auto my-1"
+    max-width="800"
+    >
+
+    <div class="gallery-wrap">
+        <img src = "../assets/img/back.png" id = "backBtn">
+
+        <div class = "gallery">
+          <div>
+            <span v-for="(imageUrl, index) in imageUrls.slice(0, 3)" :key="index">
+              <img v-if="imageUrl" :src="imageUrl">
+            </span>
+          </div>
+          <div>
+            <span v-for="(imageUrl, index) in imageUrls.slice(3, 6)" :key="index">
+              <img v-if="imageUrl" :src="imageUrl">
+            </span>
+          </div>
+        </div>
+
+        <img src = "../assets/img/next.png" id = "nextBtn">
+      </div>
+
+    <v-card-item>
+      <v-card-title>tt</v-card-title>
+    </v-card-item>
+
+    <v-card-text>
+      <v-row
+        align="center"
+        class="mx-0"
+      >
+        <v-rating
+          :model-value= "4.0" 
+          color="amber"
+          density="compact"
+          size="small"
+          half-increments
+          readonly
+        ></v-rating>
+
+        <div class="text-grey ms-4">
+          <!-- {{ this.plan['0'].creator_rating === null ? "No rating yet" : this.plan['0'].creator_rating}} -->
+        </div>
+      </v-row>
+
+      <!-- add spending logic - aka for certain range of spending cost is this much -->
+      <div class="my-4 text-subtitle-1">
+        $ • Italian, Cafe
+      </div>
+
+      <!-- plan_description -->
+      <div>rt</div>
+    </v-card-text>
+
+    <v-divider class="mx-4 mb-1"></v-divider>
+
+    <v-card-title>Status</v-card-title>
+
+    <!-- show different class of status here -->
+    <div class="px-4">
+      <v-chip-group v-model="selection">
+        <v-chip>5:30PM</v-chip>
+
+        <v-chip>7:30PM</v-chip>
+
+        <v-chip>8:00PM</v-chip>
+
+        <v-chip>9:00PM</v-chip>
+      </v-chip-group>
+    </div>
+
+    <v-card-actions>
+      <v-btn
+        color="deep-purple-lighten-2"
+        variant="text"
+        @click="reserve"
+      >
+        Favourite
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+
+  </div>
+  </body>
+</template>
 
 <style scoped>
 * {
