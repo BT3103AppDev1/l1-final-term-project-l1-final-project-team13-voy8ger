@@ -1,107 +1,199 @@
 <script setup>
-import { onMounted } from "vue";
 import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
-import MaterialInput from "@/components/material_components/MaterialInput.vue";
 import MaterialButton from "@/components/material_components/MaterialButton.vue";
-import MaterialTextArea from "@/components/material_components/MaterialTextArea.vue";
 import MaterialSwitch from "@/components/material_components/MaterialSwitch.vue";
-import setMaterialInput from "@/assets/js/material-input";
-
-// const tableRows = ref([]);
-// const planName = ref("");
-// const numberOfVoyagers = ref(0);
-// const time = ref("");
-// const category = ref("");
-// const location = ref("");
-// const spending = ref(0);
-// const remarks = ref("");
-// const totalSpending = ref(0);
-
-onMounted(() => {
-  setMaterialInput();
-});
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+import { getAuth } from "firebase/auth";
+import { db, storage } from "../firebase.js";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  arrayUnion,
+} from "firebase/firestore";
 </script>
 
 <script>
 export default {
   data() {
     return {
-      tableRows: [],
       planName: "",
       numberOfVoyagers: 0,
-      time: "",
-      category: "",
-      location: "",
-      spending: 0,
-      remarks: "",
+      creatorId: "placeholder-creator-id",
       totalSpending: 0,
+      categories: [],
+      availableCategories: [
+        "Food & Dining",
+        "Entertainment",
+        "Outdoors & Nature",
+        "Sports & Fitness",
+        "Cultural Activities",
+        "Shopping",
+        "Nightlife",
+        "Education & Learning",
+        "Travel & Tourism",
+        "Wellness & Relaxation",
+        "Social & Community",
+        "Hobbies & Crafts",
+        "Others",
+      ],
+      locationList: "",
+      planDate: new Date(),
+      planDescription: "",
+      Pictures: [],
+      planCompleted: false,
+      creatorRating: null,
+      creatorReview: "",
+      creatorSpending: 0,
     };
+  },
+  computed: {
+    isFormValid() {
+      return (
+        this.isRatingValid &&
+        this.isNumberOfVoyagersValid &&
+        this.isSpendingValid &&
+        this.isPlanNameValid &&
+        this.isDateValid &&
+        this.isDescriptionValid
+      );
+    },
+    isRatingValid() {
+      return this.creatorRating >= 0 && this.creatorRating <= 5;
+    },
+    isNumberOfVoyagersValid() {
+      return this.numberOfVoyagers > 0;
+    },
+    isSpendingValid() {
+      return this.totalSpending >= 0;
+    },
+    isPlanNameValid() {
+      return this.planName.trim() !== "";
+    },
+    isDateValid() {
+      return !isNaN(new Date(this.planDate));
+    },
+    isDescriptionValid() {
+      return this.planDescription.trim() !== "";
+    },
   },
   components: {
     NavbarDefault,
     DefaultFooter,
-    MaterialInput,
     MaterialButton,
-    MaterialTextArea,
     MaterialSwitch,
   },
   methods: {
-    savePlanToFs() {
-      console.log("Saving plan with details:");
-      console.log("Plan Name:", this.planName);
-      console.log("Number of Voyagers:", this.numberOfVoyagers);
-      console.log("Total Spending:", this.totalSpending);
-      console.log("Items:", this.tableRows);
+    async savePlanToFs() {
+      await this.fetchCreatorId();
+      if (!this.isFormValid) {
+        if (!this.isPlanNameValid) {
+          this.$toast.error("Plan name cannot be empty");
+        }
+        if (!this.isNumberOfVoyagersValid) {
+          this.$toast.error("Number of voyagers must be greater than 0");
+        }
+        if (!this.isDateValid) {
+          this.$toast.error("Date must be selected");
+        }
+        if (!this.isDescriptionValid) {
+          this.$toast.error("Description cannot be empty");
+        }
+        if (!this.isRatingValid) {
+          this.$toast.error("Rating must be between 0 and 5");
+        }
+        if (!this.isSpendingValid) {
+          this.$toast.error("Spending cannot be negative");
+        }
+        return;
+      }
 
-      // Resetting the table and form fields after saving
-      this.resetFormAndTable();
+      try {
+        const docRef = await addDoc(collection(db, "Plans"), {
+          Date: this.planDate,
+          Pictures: this.Pictures,
+          numberOfVoyagers: this.numberOfVoyagers,
+          Plan_Name: this.planName,
+          creator_id: this.creatorId,
+          creator_rating: this.creatorRating,
+          creator_review: this.creatorReview,
+          creator_spending: this.creatorSpending,
+          location_list: this.locationList,
+          catagory_list: this.categories,
+          num_likes: 0,
+          plan_description: this.planDescription,
+          status: this.planCompleted,
+          planId: null,
+        });
+        await updateDoc(doc(db, "Plans", docRef.id), {
+          planId: docRef.id,
+        });
+
+        const userRef = doc(db, "Users", this.creatorId);
+        console.log(userRef);
+        await updateDoc(userRef, {
+          plans_list: arrayUnion(docRef.id),
+        });
+
+        this.$toast.success("Plan saved successfully!");
+        this.resetForm();
+      } catch (e) {
+        this.$toast.error("Error saving the plan:", e);
+      }
     },
-
-    addItem() {
-      console.log("Adding item with values:", {
-        time: this.time,
-        category: this.category,
-        location: this.location,
-        spending: this.spending,
-        remarks: this.remarks,
-      });
-
-      const newItem = {
-        time: this.time,
-        category: this.category,
-        location: this.location,
-        spending: this.spending,
-        remarks: this.remarks,
-      };
-
-      this.tableRows.push(newItem);
-      this.totalSpending += parseFloat(this.spending) || 0;
-
-      console.log("New tableRows:", this.tableRows);
-
-      // Reset form fields
-      this.time = "";
-      this.category = "";
-      this.location = "";
-      this.spending = 0;
-      this.remarks = "";
+    togglePlanCompleted() {
+      this.planCompleted = !this.planCompleted;
     },
-
-    deleteItem(index) {
-      const item = this.tableRows.splice(index, 1)[0];
-      this.totalSpending -= item.spending;
+    triggerFileUpload() {
+      this.$refs.fileInput.click();
     },
-    resetFormAndTable() {
+    async uploadPhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const fileRef = storageRef(storage, `Plans/${file.name}`);
+
+      try {
+        const uploadResult = await uploadBytes(fileRef, file);
+        const downloadURL = await getDownloadURL(uploadResult.ref);
+        this.Pictures.push(downloadURL);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    },
+    async fetchCreatorId() {
+      const user = getAuth().currentUser;
+      if (user) {
+        this.creatorId = user.email;
+      } else {
+        console.log("No user signed in");
+      }
+    },
+    resetForm() {
       this.planName = "";
       this.numberOfVoyagers = 0;
-      this.tableRows = [];
+      this.creatorId = "placeholder-creator-id";
       this.totalSpending = 0;
-      this.time = "";
-      this.category = "";
-      this.location = "";
-      this.spending = 0;
-      this.remarks = "";
+      this.categories = [];
+      this.locationList = "";
+      this.planDate = new Date();
+      this.planDescription = "";
+      this.Pictures = [];
+      this.planCompleted = false;
+      this.creatorRating = null;
+      this.creatorReview = "";
+      this.creatorSpending = 0;
+    },
+    removePicture(index) {
+      this.Pictures.splice(index, 1);
     },
   },
 };
@@ -121,11 +213,7 @@ export default {
         <div class="col-12 col-md-8">
           <v-row class="py-7">
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="planName"
-                label="Plan Name"
-                class="mb-4"
-              ></v-text-field>
+              <v-text-field v-model="planName" label="Plan Name" class="mb-4" />
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
@@ -133,84 +221,116 @@ export default {
                 label="Number of Voyagers"
                 type="number"
                 class="mb-4"
-              ></v-text-field>
+              />
             </v-col>
-          </v-row>
-
-          <v-container>
-            <v-form @submit.prevent="addItem">
+            <v-col cols="12">
+              <input type="file" @change="uploadPhoto" hidden ref="fileInput" />
+              <MaterialButton
+                @click="triggerFileUpload"
+                variant="gradient"
+                color="dark"
+                fullWidth
+              >
+                Upload Photos
+              </MaterialButton>
               <v-text-field
-                v-model="time"
-                label="Time"
+                v-model="locationList"
+                label="Location List"
                 class="mb-4"
-              ></v-text-field>
-
-              <v-text-field
-                v-model="category"
+              />
+              <v-select
+                v-model="categories"
+                :items="availableCategories"
                 label="Category"
                 class="mb-4"
-              ></v-text-field>
-
-              <v-text-field
-                v-model="location"
-                label="Location"
+                attach
+                chips
+                multiple
+                clearable
+                dense
+                solo
+                placeholder="Select category/ catagories"
+              />
+              <div>Date</div>
+              <Datepicker v-model="planDate" :enable-time-picker="false" />
+              <br />
+              <v-textarea
+                v-model="planDescription"
+                label="Plan Description"
                 class="mb-4"
-              ></v-text-field>
+              />
+              <MaterialSwitch
+                :checked="planCompleted"
+                @change="togglePlanCompleted"
+                class="mb-4 d-flex align-items-center"
+                id="flexSwitchCheckDefault"
+              >
+                Plan Completed?
+              </MaterialSwitch>
+            </v-col>
 
+            <v-col cols="12" v-if="planCompleted">
               <v-text-field
-                v-model.number="spending"
-                label="Spending"
+                v-model.number="creatorRating"
+                label="Creator Rating (0 to 5)"
                 type="number"
                 class="mb-4"
               ></v-text-field>
 
               <v-textarea
-                v-model="remarks"
-                label="Remarks"
+                v-model="creatorReview"
+                label="Creator Review"
                 class="mb-4"
               ></v-textarea>
 
-              <MaterialButton
-                type="submit"
-                variant="gradient"
-                color="dark"
-                fullWidth
-              >
-                Add Row
-              </MaterialButton>
-            </v-form>
-          </v-container>
+              <v-text-field
+                v-model.number="creatorSpending"
+                label="Creator Spending"
+                type="number"
+                class="mb-4"
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </div>
-        <div class="plan table">
-          <table id="table" class="auto-index">
-            <tr>
-              <th>Time</th>
-              <th>Catagory</th>
-              <th>Location</th>
-              <th>Spending</th>
-              <th>Remarks</th>
-              <th>Options</th>
-            </tr>
-            <tr v-for="(row, index) in tableRows" :key="index">
-              <td>{{ row.time }}</td>
-              <td>{{ row.category }}</td>
-              <td>{{ row.location }}</td>
-              <td>{{ row.spending }}</td>
-              <td>{{ row.remarks }}</td>
-              <td>
-                <MaterialButton
-                  @click="deleteItem(index)"
-                  type="submit"
-                  variant="gradient"
-                  color="dark"
-                  >Delete</MaterialButton
-                >
-              </td>
-            </tr>
-          </table>
-          <br /><br />
+        <div class="plan preview">
+          <h2>Preview Plan</h2>
+          <div class="gallery-wrap"></div>
+          <v-carousel v-if="Pictures.length > 0">
+            <v-carousel-item v-for="(picture, index) in Pictures" :key="index">
+              <div class="image-container" @click="removePicture(index)">
+                <img :src="picture" alt="Uploaded Image" class="image" />
+                <div class="overlay">
+                  <v-icon color="white">mdi-delete</v-icon>
+                </div>
+              </div>
+            </v-carousel-item>
+          </v-carousel>
 
-          <h2 id="totalProfit">Total Spending: ${{ totalSpending }}</h2>
+          <v-card-item>
+            <v-card-title>{{ planName }}</v-card-title>
+          </v-card-item>
+
+          <v-card-text>
+            <v-row class="mx-0">
+              <v-rating
+                v-model="creatorRating"
+                color="amber"
+                density="compact"
+                size="small"
+                half-increments
+                readonly
+              ></v-rating>
+              <div class="text-grey ms-4">
+                {{ creatorRating || "No rating yet" }}
+              </div>
+            </v-row>
+
+            <div class="my-4 text-subtitle-1">${{ totalSpending }}</div>
+
+            <div>{{ planDescription }}</div>
+          </v-card-text>
+
+          <v-divider class="mx-4 mb-1"></v-divider>
 
           <MaterialButton
             @click="savePlanToFs"
@@ -230,27 +350,41 @@ export default {
 
 <style scoped>
 .page-header {
-  margin-top: 2rem; /* Adjust the value as needed */
-  background-image: url("@/assets/img/voy8ger_image.jpeg"); /* Path to your image */
-  background-size: cover; /* Cover the entire space */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Do not repeat the image */
+  margin-top: 2rem;
+  background-image: url("@/assets/img/voy8ger_image.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-table {
-  border-collapse: collapse;
+.image-container {
+  position: relative;
   width: 100%;
 }
 
-#totalProfit {
-  text-align: center;
-  font: 700;
+.image {
   display: block;
-  font-size: 2em;
-  margin-block-start: 0.67em;
-  margin-block-end: 0.67em;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
-  font-weight: bold;
+  width: 100%;
+  height: auto;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: 0.5s ease;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
 }
 </style>

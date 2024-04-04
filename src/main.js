@@ -25,7 +25,7 @@ app.use(materialKit);
 app.use(Toaster, {
   position: "top",
   dismissable: "true",
-  maxToasts: 2,
+  maxToasts: 1,
 });
 app.use(vuetify);
 
