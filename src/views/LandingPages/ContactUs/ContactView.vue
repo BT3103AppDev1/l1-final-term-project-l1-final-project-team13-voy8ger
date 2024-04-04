@@ -68,7 +68,7 @@ onMounted(() => {
                 <div
                   class="bg-gradient-success shadow-success border-radius-lg p-3"
                 >
-                  <h3 class="text-white text-success mb-0" style="color: white;">Contact us</h3>
+                  <h3 class="text-white text-success mb-0">Contact us</h3>
                 </div>
               </div>
               <div class="card-body">
