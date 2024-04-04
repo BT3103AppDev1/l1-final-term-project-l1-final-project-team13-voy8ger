@@ -9,12 +9,13 @@ import {
   getDocs,
   getDoc,
   doc,
+  query, where,
   deleteDoc,
   updateDoc,
 } from "firebase/firestore";
 
 // misc imports
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted} from "vue";
 import { RouterLink } from "vue-router";
 import "@mdi/font/css/materialdesignicons.css";
 
@@ -22,54 +23,166 @@ import "@mdi/font/css/materialdesignicons.css";
 import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
 import Header from "../components/Header.vue";
+
+const menu = ref(false)
 </script>
 
 <script>
 export default {
+  
+
   data() {
     return {
       // HTTPS link of your image
       imageLink: "https://cdn.vuetifyjs.com/images/cards/cooking.png",
       loading: false,
       selection: 1,
-      plan: [],
-      imageUrls: []
+
+      plan: '',
+      imageUrls: [],
+      imageKey: 0,
+
+      locationSnapshot: '',
+
+      AllowFavourite: true,
+      AllowLike: true,
+
+      userEmail: '',
     };
   }, mounted() {
+      // get current user details
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          this.userEmail = user.email;
+        }
+      });
+
       this.UpdatePlan(this.$route.query.id);
       this.created();
-      
-      // console.log(this.$route.query.id);
-      // add all the image scrollbar functionality
-      let scrollBar = document.querySelector(".gallery");
-      let backBtn = document.getElementById("backBtn");
-      let nextBtn = document.getElementById("nextBtn");
-
-      scrollBar.addEventListener("wheel", (event) => {
-        event.preventDefault();
-        scrollBar.scrollLeft += event.deltaX;
-      });
-
-      nextBtn.addEventListener("click", () => {
-        scrollBar.scrollLeft += 800;
-      });
-
-      backBtn.addEventListener("click", () => {
-        scrollBar.scrollLeft -= 800;
-      });
 
   }, methods: {
       reserve() {
         this.loading = true
-
         setTimeout(() => (this.loading = false), 2000)
     },
 
     async UpdatePlan(planId) {
       // store this plan in a list
       console.log(planId);
-      this.plan.push((await getDoc(doc(db, "Plans", planId))).data());
-      console.log(this.plan['0']);
+      const docSnap = await getDoc(doc(db, "Plans", planId));
+      
+      if (docSnap.exists()) {
+        // Document data is available in docSnap.data()
+
+        // having issues extracting indiv fields if we pass the whole .data() object
+        // so this is an alternative
+        this.plan = {'Plan_Name':docSnap.data().Plan_Name, 
+        'creator_id': docSnap.data().creator_id,
+        'creator_rating': docSnap.data().creator_rating,
+        'creator_review': docSnap.data().creator_review,
+        'creator_spending': docSnap.data().creator_spending,
+        'location_list': docSnap.data().location_list,
+        'num_likes': docSnap.data().num_likes,
+        'creator_spending': docSnap.data().creator_spending,
+        'planId': docSnap.data().planId,
+        'plan_description': docSnap.data().plan_description,
+        'status': docSnap.data().status};
+
+        // get ALL location details of that plan
+        const collectionRef = collection(db, "Locations"); 
+        const q = query(collectionRef, where('__name__', 'in', this.plan.location_list));
+        const snapshot = await getDocs(q);
+        this.locationSnapshot = {}
+
+        // Iterate over the snapshot to access each document
+        snapshot.forEach(doc => {
+          if (doc.exists()) {
+            this.locationSnapshot[doc.id] = {'address':doc.data().address, 'category':doc.data().category, 
+            'location_name':doc.data().location_name};
+
+          } else {
+            console.log("No such document with ID:", doc.id);
+          }
+        });
+
+        // check if user has favourited this plan or not -> show that user has fav it
+        const docRef2 = doc(db, "Users", String(this.userEmail));
+        const docSnap2 = await getDoc(docRef2);
+        for(let i = 0; i < docSnap2.data().saved_list.length; i++) {
+          if(docSnap2.data().saved_list[i] == planId) {
+            this.AllowFavourite = false;
+          }
+        } 
+        
+      } else {
+        console.log("No such document!");
+      }
+    },
+
+    async toggleHeart(planId) {
+      // get document of that user
+      const docRef = doc(db, "Users", String(this.userEmail));
+      const docSnap = await getDoc(docRef);
+      console.log(docSnap.data());
+
+      if(docSnap.data().saved_list.includes(planId)) {
+        // remove that plan from his favourites if it is already there
+        await this.deleteListItem(docRef, docSnap, "saved_list", planId);
+        // they can favourite it again
+        this.AllowFavourite = true;
+      } else {
+        // add the item to their saved list
+        await this.addListItem(docRef, docSnap, "saved_list", planId);
+        // they cannot favourite it again
+        this.AllowFavourite = false;
+      }
+    }, 
+
+    async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
+      try {
+        if (docSnap.exists()) {
+          // Get the data from the document
+          const data = docSnap.data();
+          // Get the list from the document data
+          const list = data[listFieldName];
+          console.log(list);
+          // Remove the item from the list
+          const updatedList = list.filter((item) => item !== itemToRemove);
+          // Update the document with the modified list
+          await updateDoc(docRef, {
+            [listFieldName]: updatedList,
+          });
+          console.log("Item removed from the list:", itemToRemove);
+        } else {
+          console.log("Document does not exist!");
+        }
+      } catch (error) {
+        console.error("Error removing item from list:", error);
+      }
+    },
+
+    // add item to a list in a document
+    async addListItem(docRef, docSnap, listFieldName, itemToAdd) {
+      try {
+        if (docSnap.exists()) {
+          // Get the data from the document
+          const existingList = docSnap.data()['saved_list'];
+          
+          // Add the new item to the existing list
+          existingList.push(itemToAdd);
+
+          // Update the document with the modified list
+          await updateDoc(docRef, {
+            "saved_list": existingList,
+          });
+          console.log("Item added to the list:", itemToRemove);
+        } else {
+          console.log("Document does not exist!");
+        }
+      } catch (error) {
+        console.error("Error adding item from list:", error);
+      }
     },
 
     // to get the images of the plan
@@ -86,6 +199,13 @@ export default {
       } catch (error) {
         console.error('Error fetching images:', error);
       }
+      // trigger re render to display image on caroussel - doesnt work
+      this.imageKey++;
+    },
+
+  }, computed: {
+    HeartColor() {
+      return this.AllowFavourite ? 'mdi-heart-outline':'mdi-heart';
     }
   }
 };
@@ -108,26 +228,17 @@ export default {
     >
 
     <div class="gallery-wrap">
-        <img src = "../assets/img/back.png" id = "backBtn">
-
-        <div class = "gallery">
-          <div>
-            <span v-for="(imageUrl, index) in imageUrls.slice(0, 3)" :key="index">
-              <img v-if="imageUrl" :src="imageUrl">
-            </span>
-          </div>
-          <div>
-            <span v-for="(imageUrl, index) in imageUrls.slice(3, 6)" :key="index">
-              <img v-if="imageUrl" :src="imageUrl">
-            </span>
-          </div>
-        </div>
-
-        <img src = "../assets/img/next.png" id = "nextBtn">
+      <div class = "gallery">
+      <v-carousel>
+          <v-carousel-item v-for="imageUrl in imageUrls" >
+            <img :src="imageUrl" alt="img">
+          </v-carousel-item>
+      </v-carousel>
       </div>
+    </div>
 
     <v-card-item>
-      <v-card-title>tt</v-card-title>
+      <v-card-title>{{plan.Plan_Name}}</v-card-title>
     </v-card-item>
 
     <v-card-text>
@@ -136,7 +247,7 @@ export default {
         class="mx-0"
       >
         <v-rating
-          :model-value= "4.0" 
+          :model-value= "plan.creator_rating" 
           color="amber"
           density="compact"
           size="small"
@@ -145,7 +256,7 @@ export default {
         ></v-rating>
 
         <div class="text-grey ms-4">
-          <!-- {{ this.plan['0'].creator_rating === null ? "No rating yet" : this.plan['0'].creator_rating}} -->
+          {{ plan.creator_rating }}
         </div>
       </v-row>
 
@@ -154,36 +265,26 @@ export default {
         $ • Italian, Cafe
       </div>
 
+      <!-- Location List -->
+      <div class="my-4">
+        <v-chip v-for="locations in locationSnapshot" class="mr-2 mb-2">
+          {{locations.location_name}}
+        </v-chip>
+      </div>
+
       <!-- plan_description -->
-      <div>rt</div>
+      <div>{{ plan.plan_description }}</div>
     </v-card-text>
 
     <v-divider class="mx-4 mb-1"></v-divider>
 
-    <v-card-title>Status</v-card-title>
-
-    <!-- show different class of status here -->
-    <div class="px-4">
-      <v-chip-group v-model="selection">
-        <v-chip>5:30PM</v-chip>
-
-        <v-chip>7:30PM</v-chip>
-
-        <v-chip>8:00PM</v-chip>
-
-        <v-chip>9:00PM</v-chip>
-      </v-chip-group>
-    </div>
-
     <v-card-actions>
-      <v-btn
-        color="deep-purple-lighten-2"
-        variant="text"
-        @click="reserve"
-      >
-        Favourite
+      <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(plan.planId)">
+        <v-icon>{{ HeartColor }}</v-icon>
       </v-btn>
+      <v-card-text>{{ AllowFavourite }}</v-card-text>
     </v-card-actions>
+
   </v-card>
 
   </div>
@@ -200,38 +301,11 @@ export default {
 .gallery {
   width: 800px;
   display: flex;
-  overflow-x: scroll;
-}
-
-.gallery div {
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto auto auto;
-  grid-gap: 20px;
-  padding: 10px;
-  flex: none;
 }
 
 .gallery div img {
   width: 100%;
   transition: transform 0.5s;
-}
-
-/* make the scroll bar invisible */
-.gallery::-webkit-scrollbar {
-  display: none;
-}
-
-.gallery-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10% auto;
-}
-
-#backBtn, #nextBtn {
-  width: 50px;
-  margin: 40px;
 }
 
 .gallery div img:hover {
