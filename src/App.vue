@@ -1,21 +1,30 @@
-<script setup>
-/*
-=========================================================
-* Vue Material Kit 2 - v2.0.0
-=========================================================
+<template>
+  <div id="nav">
+    <router-view />
+  </div>
+</template>
 
-* Product Page: https://www.creative-tim.com/product/vue-material-kit
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+<script>
 
-Coded by www.creative-tim.com
+  import SignUp from './views/Auth/SignUp.vue';
+  import LogIn from './views/Auth/LogIn.vue';
+  import Home from './views/Home.vue';
+  import Profile from './views/Profile.vue';
+  import Favourites from "./views/Favourites.vue";
+  import SinglePlan from "./views/SinglePlan.vue";
 
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-import { RouterView } from "vue-router";
+  export default {
+    name: 'App',
+    components: {
+      SignUp,
+      LogIn,
+      Home,
+      Profile,
+      Favourites,
+      SinglePlan
+    }
+  }
 </script>
 
-<template>
-  <router-view />
-</template>
+<!-- <style scoped>
+</style> -->
