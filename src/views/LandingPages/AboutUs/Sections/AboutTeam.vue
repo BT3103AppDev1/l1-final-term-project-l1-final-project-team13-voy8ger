@@ -35,7 +35,7 @@ import marquez from "@/assets/img/ivana-square.jpg";
           <HorizontalTeamCard
             class="mt-4"
             :image="emma"
-            :profile="{ name: 'Emma Roberts', link: 'javascript:;' }"
+            :profile="{ name: 'FONG KAI JUN', link: 'javascript:;' }"
             :position="{ label: 'UI Designer', color: 'success' }"
             description="Artist is a term applied to a person who engages in an
                     activity deemed to be an art."
@@ -46,7 +46,7 @@ import marquez from "@/assets/img/ivana-square.jpg";
           <HorizontalTeamCard
             class="mt-lg-4 mt-5"
             :image="william"
-            :profile="{ name: 'William Pearce', link: 'javascript:;' }"
+            :profile="{ name: 'GOPAL RADHAKRISHNAN RAMANEN BHARATWA', link: 'javascript:;' }"
             :position="{ label: 'Boss', color: 'success' }"
             description="Artist is a term applied to a person who engages in an
                     activity deemed to be an art."
@@ -60,7 +60,7 @@ import marquez from "@/assets/img/ivana-square.jpg";
           <HorizontalTeamCard
             class="mt-4 z-index-2"
             :image="ivana"
-            :profile="{ name: 'Ivana Flow', link: 'javascript:;' }"
+            :profile="{ name: 'JERON LIAW XUAN JUN', link: 'javascript:;' }"
             :position="{ label: 'Athlete', color: 'success' }"
             description="Artist is a term applied to a person who engages in an
                     activity deemed to be an art."
@@ -70,7 +70,7 @@ import marquez from "@/assets/img/ivana-square.jpg";
           <HorizontalTeamCard
             class="mt-lg-4 mt-5 z-index-2"
             :image="marquez"
-            :profile="{ name: 'Marquez Garcia', link: 'javascript:;' }"
+            :profile="{ name: 'COCO LI XINRUI', link: 'javascript:;' }"
             :position="{ label: 'JS Developer', color: 'success' }"
             description="Artist is a term applied to a person who engages in an
                     activity deemed to be an art."
@@ -85,7 +85,7 @@ import marquez from "@/assets/img/ivana-square.jpg";
           <HorizontalTeamCard
             class="mt-lg-4 mt-5 z-index-2"
             :image="marquez"
-            :profile="{ name: 'Bob Garcia', link: 'javascript:;' }"
+            :profile="{ name: 'LAI HSUAN JUNG', link: 'javascript:;' }"
             :position="{ label: 'JS Developer', color: 'success' }"
             description="Artist is a term applied to a person who engages in an
                     activity deemed to be an art."
