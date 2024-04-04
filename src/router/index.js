@@ -7,7 +7,7 @@ import Explore from "../views/Explore.vue";
 import CreatePlan from "../views/CreatePlan.vue";
 import Favourites from "../views/Favourites.vue";
 import SinglePlan from "@/views/SinglePlan.vue";
-import AboutView from "@/views/LandingPages/AboutUs/AboutView.vue";
+import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
 import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
 
 const router = createRouter({
