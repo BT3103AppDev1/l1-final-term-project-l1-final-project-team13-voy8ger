@@ -2,8 +2,10 @@
 import { onMounted } from "vue";
 
 //example components
-import DefaultNavbar from "@/examples/navbars/NavbarDefault.vue";
-import DefaultFooter from "@/examples/footers/FooterDefault.vue";
+//import NavbarDefault from "@/components/NavbarDefault.vue";
+import DefaultFooter from "@/components/NavbarDefault.vue";
+//import DefaultNavbar from "@/examples/navbars/NavbarDefault.vue";
+//import DefaultFooter from "@/examples/footers/FooterDefault.vue";
 
 //image
 import image from "@/assets/img/illustrations/illustration-signin.jpg";
@@ -66,7 +68,7 @@ onMounted(() => {
                 <div
                   class="bg-gradient-success shadow-success border-radius-lg p-3"
                 >
-                  <h3 class="text-white text-success mb-0">Contact us</h3>
+                  <h3 class="text-white text-success mb-0" style="color: white;">Contact us</h3>
                 </div>
               </div>
               <div class="card-body">
