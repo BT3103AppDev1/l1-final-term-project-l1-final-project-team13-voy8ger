@@ -32,44 +32,48 @@ export default {
       imageLink: "https://cdn.vuetifyjs.com/images/cards/cooking.png",
       loading: false,
       selection: 1,
-      plan: [],
-      imageUrls: []
+      plan: '',
+      imageUrls: [],
+      imageKey: 0
     };
   }, mounted() {
-      this.UpdatePlan(this.$route.query.id);
+      this.plan = this.UpdatePlan(this.$route.query.id);
       this.created();
-      
-      // console.log(this.$route.query.id);
-      // add all the image scrollbar functionality
-      let scrollBar = document.querySelector(".gallery");
-      let backBtn = document.getElementById("backBtn");
-      let nextBtn = document.getElementById("nextBtn");
-
-      scrollBar.addEventListener("wheel", (event) => {
-        event.preventDefault();
-        scrollBar.scrollLeft += event.deltaX;
-      });
-
-      nextBtn.addEventListener("click", () => {
-        scrollBar.scrollLeft += 800;
-      });
-
-      backBtn.addEventListener("click", () => {
-        scrollBar.scrollLeft -= 800;
-      });
 
   }, methods: {
       reserve() {
         this.loading = true
-
         setTimeout(() => (this.loading = false), 2000)
     },
 
     async UpdatePlan(planId) {
       // store this plan in a list
       console.log(planId);
-      this.plan.push((await getDoc(doc(db, "Plans", planId))).data());
-      console.log(this.plan['0']);
+      const docSnap = await getDoc(doc(db, "Plans", planId));
+      
+      if (docSnap.exists()) {
+        // Document data is available in docSnap.data()
+        console.log(docSnap.data());
+
+        // having issues extracting indiv fields if we pass the whole .data() object
+        // so this is an alternative
+        this.plan = {'Plan_Name':docSnap.data().Plan_Name, 
+        'creator_id': docSnap.data().creator_id,
+        'creator_rating': docSnap.data().creator_rating,
+        'creator_review': docSnap.data().creator_review,
+        'creator_spending': docSnap.data().creator_spending,
+        'location_list': docSnap.data().location_list,
+        'num_likes': docSnap.data().num_likes,
+        'creator_spending': docSnap.data().creator_spending,
+        'planId': docSnap.data().planId,
+        'plan_description': docSnap.data().plan_description,
+        'status': docSnap.data().status};
+
+        return this.plan;
+      } else {
+        console.log("No such document!");
+        return null;
+      }
     },
 
     // to get the images of the plan
@@ -86,6 +90,8 @@ export default {
       } catch (error) {
         console.error('Error fetching images:', error);
       }
+      // trigger re render to display image on caroussel
+      this.imageKey++;
     }
   }
 };
@@ -108,26 +114,17 @@ export default {
     >
 
     <div class="gallery-wrap">
-        <img src = "../assets/img/back.png" id = "backBtn">
-
-        <div class = "gallery">
-          <div>
-            <span v-for="(imageUrl, index) in imageUrls.slice(0, 3)" :key="index">
-              <img v-if="imageUrl" :src="imageUrl">
-            </span>
-          </div>
-          <div>
-            <span v-for="(imageUrl, index) in imageUrls.slice(3, 6)" :key="index">
-              <img v-if="imageUrl" :src="imageUrl">
-            </span>
-          </div>
-        </div>
-
-        <img src = "../assets/img/next.png" id = "nextBtn">
+      <div class = "gallery">
+      <v-carousel>
+          <v-carousel-item v-for="imageUrl in this.imageUrls" >
+            <img :src="imageUrl" alt="img">
+          </v-carousel-item>
+      </v-carousel>
       </div>
+    </div>
 
     <v-card-item>
-      <v-card-title>tt</v-card-title>
+      <v-card-title>{{this.plan.Plan_Name}}</v-card-title>
     </v-card-item>
 
     <v-card-text>
@@ -136,7 +133,7 @@ export default {
         class="mx-0"
       >
         <v-rating
-          :model-value= "4.0" 
+          :model-value= "this.plan.creator_rating" 
           color="amber"
           density="compact"
           size="small"
@@ -145,7 +142,7 @@ export default {
         ></v-rating>
 
         <div class="text-grey ms-4">
-          <!-- {{ this.plan['0'].creator_rating === null ? "No rating yet" : this.plan['0'].creator_rating}} -->
+          {{ this.plan.creator_rating }}
         </div>
       </v-row>
 
@@ -155,24 +152,19 @@ export default {
       </div>
 
       <!-- plan_description -->
-      <div>rt</div>
+      <div>{{ this.plan.plan_description }}</div>
     </v-card-text>
 
     <v-divider class="mx-4 mb-1"></v-divider>
 
-    <v-card-title>Status</v-card-title>
-
-    <!-- show different class of status here -->
+    <!-- show different class of planning status here -->
     <div class="px-4">
-      <v-chip-group v-model="selection">
-        <v-chip>5:30PM</v-chip>
-
-        <v-chip>7:30PM</v-chip>
-
-        <v-chip>8:00PM</v-chip>
-
-        <v-chip>9:00PM</v-chip>
-      </v-chip-group>
+      <v-chip v-if="this.plan.status" color="red">
+        Planning
+      </v-chip>
+      <v-chip v-else color="green">
+        Completed
+      </v-chip>
     </div>
 
     <v-card-actions>
@@ -200,38 +192,11 @@ export default {
 .gallery {
   width: 800px;
   display: flex;
-  overflow-x: scroll;
-}
-
-.gallery div {
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto auto auto;
-  grid-gap: 20px;
-  padding: 10px;
-  flex: none;
 }
 
 .gallery div img {
   width: 100%;
   transition: transform 0.5s;
-}
-
-/* make the scroll bar invisible */
-.gallery::-webkit-scrollbar {
-  display: none;
-}
-
-.gallery-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10% auto;
-}
-
-#backBtn, #nextBtn {
-  width: 50px;
-  margin: 40px;
 }
 
 .gallery div img:hover {
