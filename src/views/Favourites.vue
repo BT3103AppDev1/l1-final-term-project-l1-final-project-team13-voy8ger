@@ -100,6 +100,7 @@ export default {
       // get saved plan list of the user
       const docRef = doc(db, "Users", String(this.userEmail));
       const docSnap = await getDoc(docRef);
+      console.log(docSnap.data());
       console.log(docSnap.data().saved_list);
 
       // get all the plans out & put it into the list temp

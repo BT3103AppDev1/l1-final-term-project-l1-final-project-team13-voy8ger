@@ -28,7 +28,6 @@ export default {
       planName: "",
       numberOfVoyagers: 0,
       creatorId: "placeholder-creator-id",
-      totalSpending: 0,
       categories: [],
       availableCategories: [
         "Food & Dining",
@@ -73,7 +72,7 @@ export default {
       return this.numberOfVoyagers > 0;
     },
     isSpendingValid() {
-      return this.totalSpending >= 0;
+      return this.creatorSpending >= 0;
     },
     isPlanNameValid() {
       return this.planName.trim() !== "";
@@ -181,7 +180,7 @@ export default {
       this.planName = "";
       this.numberOfVoyagers = 0;
       this.creatorId = "placeholder-creator-id";
-      this.totalSpending = 0;
+      this.creatorSpending = 0;
       this.categories = [];
       this.locationList = "";
       this.planDate = new Date();
@@ -325,7 +324,7 @@ export default {
               </div>
             </v-row>
 
-            <div class="my-4 text-subtitle-1">${{ totalSpending }}</div>
+            <div class="my-4 text-subtitle-1">${{ creatorSpending }}</div>
 
             <div>{{ planDescription }}</div>
           </v-card-text>
