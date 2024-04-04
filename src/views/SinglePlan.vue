@@ -29,7 +29,6 @@ const menu = ref(false)
 
 <script>
 export default {
-  
 
   data() {
     return {
@@ -48,6 +47,9 @@ export default {
       AllowLike: true,
 
       userEmail: '',
+      userName: '',
+      likeCount: '',
+      planId: this.$route.query.id
     };
   }, mounted() {
       // get current user details
@@ -58,7 +60,7 @@ export default {
         }
       });
 
-      this.UpdatePlan(this.$route.query.id);
+      this.UpdatePlan(this.planId);
       this.created();
 
   }, methods: {
@@ -70,7 +72,7 @@ export default {
     async UpdatePlan(planId) {
       // store this plan in a list
       console.log(planId);
-      const docSnap = await getDoc(doc(db, "Plans", planId));
+      const docSnap = await getDoc(doc(db, "Plans", this.planId));
       
       if (docSnap.exists()) {
         // Document data is available in docSnap.data()
@@ -109,9 +111,19 @@ export default {
         // check if user has favourited this plan or not -> show that user has fav it
         const docRef2 = doc(db, "Users", String(this.userEmail));
         const docSnap2 = await getDoc(docRef2);
+        this.userName = docSnap2.data().Name;
         for(let i = 0; i < docSnap2.data().saved_list.length; i++) {
           if(docSnap2.data().saved_list[i] == planId) {
             this.AllowFavourite = false;
+          }
+        } 
+
+        // check if user has liked this plan or not -> show that user has liked it
+        const docRef3 = doc(db, "Likes", planId);
+        const docSnap3 = await getDoc(docRef3);
+        for(let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
+          if(docSnap3.data().Liked_Users[i] == planId) {
+            this.AllowLike = false;
           }
         } 
         
@@ -133,9 +145,27 @@ export default {
         this.AllowFavourite = true;
       } else {
         // add the item to their saved list
-        await this.addListItem(docRef, docSnap, "saved_list", planId);
+        await this.addListItemHeart(docRef, docSnap, "saved_list", planId);
         // they cannot favourite it again
         this.AllowFavourite = false;
+      }
+    }, 
+
+    async toggleLike(planId) {
+      // get document of that liked users from collection Likes
+      const docRef = doc(db, "Likes", planId);
+      const docSnap = await getDoc(docRef);
+
+      if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
+        // remove thae users from liked it is already there
+        await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // they can like it again
+        this.AllowLike = true;
+      } else {
+        // add the item to their saved list
+        await this.addListItemLike(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // they cannot favourite it again
+        this.AllowLike = false;
       }
     }, 
 
@@ -163,11 +193,11 @@ export default {
     },
 
     // add item to a list in a document
-    async addListItem(docRef, docSnap, listFieldName, itemToAdd) {
+    async addListItemHeart(docRef, docSnap, listFieldName, itemToAdd) {
       try {
         if (docSnap.exists()) {
           // Get the data from the document
-          const existingList = docSnap.data()['saved_list'];
+          const existingList = docSnap.data()["saved_list"];
           
           // Add the new item to the existing list
           existingList.push(itemToAdd);
@@ -203,9 +233,48 @@ export default {
       this.imageKey++;
     },
 
+    async addListItemLike(docRef, docSnap, listFieldName, itemToAdd) {
+      try {
+        if (docSnap.exists()) {
+          // Get the data from the document
+          const existingList = docSnap.data()["Liked_Users"];
+          
+          // Add the new item to the existing list
+          existingList.push(itemToAdd);
+
+          // Update the document with the modified list
+          await updateDoc(docRef, {
+            "Liked_Users": existingList,
+          });
+          console.log("Item added to the list:", itemToRemove);
+        } else {
+          console.log("Document does not exist!");
+        }
+      } catch (error) {
+        console.error("Error adding item from list:", error);
+      }
+    },
+
+    // currently not working
+    async getNumLikes() {
+      const docRef = doc(db, "Likes", planId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        this.likeCount = docSnap.data().Liked_Users.length;
+        console.log(likeCount);
+        return likeCount;
+      }
+    }
+
   }, computed: {
     HeartColor() {
       return this.AllowFavourite ? 'mdi-heart-outline':'mdi-heart';
+    },
+    LikeColor() {
+      return this.AllowLike ? 'blue-lighten-3':'blue-darken-3';
+    }, 
+    LikeCount() {
+      return this.likeCount
     }
   }
 };
@@ -238,14 +307,27 @@ export default {
     </div>
 
     <v-card-item>
+      <v-row align="center" dense>
+        <v-col cols="auto">
+          <v-avatar size="36px">
+            <v-img
+              alt="Avatar"
+              src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460"
+            ></v-img>
+          </v-avatar>
+        </v-col>
+        <v-col cols="auto">
+          <v-card-title>{{userName}}'s</v-card-title>
+        </v-col>
+      </v-row>
+    </v-card-item>
+
+    <v-card-item>
       <v-card-title>{{plan.Plan_Name}}</v-card-title>
     </v-card-item>
 
     <v-card-text>
-      <v-row
-        align="center"
-        class="mx-0"
-      >
+      <v-row align="center">
         <v-rating
           :model-value= "plan.creator_rating" 
           color="amber"
@@ -282,7 +364,10 @@ export default {
       <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(plan.planId)">
         <v-icon>{{ HeartColor }}</v-icon>
       </v-btn>
-      <v-card-text>{{ AllowFavourite }}</v-card-text>
+      <v-btn :color="LikeColor" icon small variant="plain" size="small" @click="toggleLike(plan.planId)">
+        <v-icon>mdi-thumb-up</v-icon>
+      </v-btn>
+      <v-card-title>{{ LikeCount }} Likes</v-card-title>
     </v-card-actions>
 
   </v-card>
