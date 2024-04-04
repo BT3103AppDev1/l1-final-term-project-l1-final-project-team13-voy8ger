@@ -178,11 +178,12 @@ defineProps({
               </a>
             </li>
 
-            <!--
+          <!--
             <li v-if="name === 'company'">
               <router-link :to="{ name: 'AboutUs' }" class="nav-link">about us</router-link>
             </li>
 
+            
             <li v-if="name === 'help & support'">
               <router-link :to="{ name: 'ContactUs' }" class="nav-link">contact us</router-link>
             </li>

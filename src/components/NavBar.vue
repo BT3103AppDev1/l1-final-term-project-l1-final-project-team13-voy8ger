@@ -1,4 +1,4 @@
-<!--
+
 <template>
 <nav>
       <ul>
@@ -40,4 +40,3 @@
     background-color: #555; /* Background color of the links on hover */
   }
   </style>
--->

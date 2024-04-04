@@ -2,6 +2,8 @@
 import { onMounted, onUnmounted } from "vue";
 
 //example components
+//import NavbarDefault from "../components/NavbarDefault.vue";
+//import DefaultFooter from "../components/FooterDefault.vue";
 import DefaultNavbar from "../../../examples/navbars/NavbarDefault.vue";
 import DefaultFooter from "../../../examples/footers/FooterDefault.vue";
 
