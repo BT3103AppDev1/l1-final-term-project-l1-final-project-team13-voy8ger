@@ -57,6 +57,7 @@ defineProps({
             href: "/about-us"
           },
           
+          /*
           {
             name: "freebies",
             href: "https://www.creative-tim.com/templates/free"
@@ -66,11 +67,13 @@ defineProps({
             href: "https://www.creative-tim.com/templates/premium"
           },
           { name: "blog", href: "https://www.creative-tim.com/blog" }
+          */
         ]
       },
       {
         name: "resources",
         items: [
+          /*
           { name: "illustrations", href: "https://iradesign.io/" },
           {
             name: "bits & snippets",
@@ -80,6 +83,7 @@ defineProps({
             name: "affiliate program",
             href: "https://www.creative-tim.com/affiliates/new"
           }
+          */
         ]
       },
       {
@@ -89,6 +93,7 @@ defineProps({
             name: "contact us",
             href: "/contact-us"
           },
+          /*
           {
             name: "knowledge center",
             href: "https://www.creative-tim.com/knowledge-center"
@@ -101,11 +106,13 @@ defineProps({
             name: "sponsorships",
             href: "https://www.creative-tim.com/sponsorships"
           }
+          */
         ]
       },
       {
         name: "legal",
         items: [
+          /*
           {
             name: "terms & conditions",
             href: "https://www.creative-tim.com/terms"
@@ -118,6 +125,7 @@ defineProps({
             name: "licenses (EULA)",
             href: "https://www.creative-tim.com/license"
           }
+          */
         ]
       }
     ]
@@ -161,14 +169,16 @@ defineProps({
           <h6 class="text-sm">{{ name }}</h6>
           <ul class="flex-column ms-n3 nav">
             <li class="nav-item" v-for="item of items" :key="item.name">
-              <!--<router-link v-if="item.name === 'about us'" :to="{ name: 'AboutUs' }" class="nav-link">{{ item.name }}</router-link>-->
-              <!--<router-link v-else-if="item.name === 'contact us'" :to="{ name: 'ContactUs' }" class="nav-link">{{ item.name }}</router-link>--> 
+              <!--
+              <router-link v-if="item.name === 'about us'" :to="{ name: 'AboutUs' }" class="nav-link">{{ item.name }}</router-link>
+              <router-link v-else-if="item.name === 'contact us'" :to="{ name: 'ContactUs' }" class="nav-link">{{ item.name }}</router-link>
+              -->
               <a class="nav-link" :href="item.href" target="_blank">
                 {{ item.name }}
               </a>
             </li>
 
-            
+            <!--
             <li v-if="name === 'company'">
               <router-link :to="{ name: 'AboutUs' }" class="nav-link">about us</router-link>
             </li>
@@ -176,6 +186,8 @@ defineProps({
             <li v-if="name === 'help & support'">
               <router-link :to="{ name: 'ContactUs' }" class="nav-link">contact us</router-link>
             </li>
+          -->
+          
           
 
           </ul>
