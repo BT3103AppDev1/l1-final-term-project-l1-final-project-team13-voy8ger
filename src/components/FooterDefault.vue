@@ -55,6 +55,7 @@ defineProps({
             name: "about us",
             href: "/about-us",
           },
+          /*
           {
             name: "freebies",
             href: "https://www.creative-tim.com/templates/free",
@@ -64,11 +65,14 @@ defineProps({
             href: "https://www.creative-tim.com/templates/premium",
           },
           { name: "blog", href: "https://www.creative-tim.com/blog" },
+          */
         ],
+
       },
       {
         name: "resources",
         items: [
+          /*
           { name: "illustrations", href: "https://iradesign.io/" },
           {
             name: "bits & snippets",
@@ -78,6 +82,7 @@ defineProps({
             name: "affiliate program",
             href: "https://www.creative-tim.com/affiliates/new",
           },
+          */
         ],
       },
       {
@@ -87,6 +92,7 @@ defineProps({
             name: "contact us",
             href: "/contact-us",
           },
+          /*
           {
             name: "knowledge center",
             href: "https://www.creative-tim.com/knowledge-center",
@@ -99,11 +105,13 @@ defineProps({
             name: "sponsorships",
             href: "https://www.creative-tim.com/sponsorships",
           },
+          */
         ],
       },
       {
         name: "legal",
         items: [
+          /*
           {
             name: "terms & conditions",
             href: "https://www.creative-tim.com/terms",
@@ -116,6 +124,7 @@ defineProps({
             name: "licenses (EULA)",
             href: "https://www.creative-tim.com/license",
           },
+          */
         ],
       },
     ],
