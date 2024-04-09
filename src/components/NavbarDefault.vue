@@ -1,12 +1,41 @@
 <script setup>
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { ref, watch } from "vue";
 import { useWindowsWidth } from "../assets/js/useWindowsWidth";
+
+import { auth } from '@/firebase'; // Import Firebase auth module
+
+
 
 // images
 import ArrDark from "@/assets/img/down-arrow-dark.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
 
+// Access authentication state from Firebase auth module
+const isAuthenticated = ref(false); // Initialize as false initially
+const router = useRouter();
+
+// Function to handle sign in
+async function handleSignIn() {
+  router.push('/login'); // Redirect to login page
+}
+
+// Function to handle sign out
+async function handleSignOut() {
+  try {
+    await auth.signOut(); // Call Firebase's signOut method
+    router.push('/'); // Redirect to home page after signing out
+  } catch (error) {
+    console.error('Error signing out:', error.message);
+  }
+}
+
+auth.onAuthStateChanged(user => {
+  isAuthenticated.value = !!user; // Update isAuthenticated based on user authentication status
+});
+
+
+//dont change
 const props = defineProps({
   action: {
     type: Object,
@@ -86,6 +115,8 @@ watch(
     }
   }
 );
+
+
 </script>
 
 <template>
@@ -129,17 +160,7 @@ watch(
       >
         <ul class="navbar-nav navbar-nav-hover ms-auto">
           
-          <!--
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <a
-              href="https://www.github.com/creativetimofficial/vue-material-kit"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
 
-              Explore
-            </a>
-          </li>
-        -->
         <li class="nav-item dropdown dropdown-hover mx-2">
             <RouterLink
               :to="{ name: 'Explore' }"
@@ -151,6 +172,7 @@ watch(
               Explore
             </RouterLink>
           </li>
+
           
           <li class="nav-item dropdown dropdown-hover mx-2">
             <RouterLink
@@ -187,26 +209,24 @@ watch(
               Profile
             </RouterLink>
           </li>
-
-          
-        
         </ul>
+
         
+
         <ul class="navbar-nav d-lg-block d-none">
-
           <li class="nav-item">
-            <!-- define a sepeate function for sign in -->
-            <a
-              href="/login"
-              class="btn btn-sm mb-0"
-              :class="action.color"
-              onclick="smoothToPricing('pricing-soft-ui')"
-            >
-              Sign In</a
-            >
+            <!-- Conditional rendering based on authentication status -->
+            <button v-if="!isAuthenticated" @click="handleSignIn" class="btn btn-sm mb-0" :class="action.color">
+              Sign In
+            </button>
+            <button v-else @click="handleSignOut" class="btn btn-sm mb-0" :class="action.color">
+              Sign Out
+            </button>
           </li>
-          
         </ul>
+    
+      
+      
 
       </div>
     </div>
