@@ -28,9 +28,10 @@ export default {
   data() {
     return {
       heart: true, // Initially, the heart icon is filled as it is in the fav page
-      user: "",
-      userEmail: "",
+      user: '',
+      userEmail: '',
       temp: [],
+      search: ''
     };
   },
 
@@ -45,6 +46,17 @@ export default {
         this.fetchAndUpdateData(this.userEmail);
       }
     });
+  },
+
+  computed: {
+    // filter the plans based on what has been typed in the search bar
+    filterer: function() {
+      if(this.search === '') {
+        return this.temp;
+      } else {
+        return this.temp.filter(plan => plan.Plan_Name.includes(this.search))
+      }
+    }
   },
 
   methods: {
@@ -88,6 +100,7 @@ export default {
       // get saved plan list of the user
       const docRef = doc(db, "Users", String(this.userEmail));
       const docSnap = await getDoc(docRef);
+      console.log(docSnap.data());
       console.log(docSnap.data().saved_list);
 
       // get all the plans out & put it into the list temp
@@ -97,6 +110,15 @@ export default {
 
       console.log(this.temp);
     },
+
+    goToSinglePlan(planId) {
+      console.log(planId);
+      // go to the singlePlan view and send the planId
+      // so that details related to this plan can be retrived there
+      this.$router.push({ name: "SinglePlan", query: {
+        id: planId
+      } });
+    }
   },
 };
 </script>
@@ -130,40 +152,36 @@ export default {
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col v-for="output in temp" cols="4">
-          <!-- :key="card.id" -->
-          <v-card class="mx-auto" max-width="300" max-height="250">
-            <v-img
-              height="150px"
-              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-              cover
-            ></v-img>
+        <v-row>
+        <v-col v-for="output in filterer" cols="4"> 
+            <v-card class="mx-auto card" max-width="330" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
 
-            <v-card-title>{{ output.Plan_Name }}</v-card-title>
+            <v-img
+            class="align-end text-white"
+            height="150"
+            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+            cover
+            >
+
+            <v-card-title >{{ output.Plan_Name }}</v-card-title>
+            </v-img>
 
             <v-row align="center">
-              <v-col cols="6">
-                <v-card-text>{{ output.num_likes }} likes</v-card-text>
-                <v-card-subtitle>{{ output.plan_description }}</v-card-subtitle>
-              </v-col>
+                <v-col cols="6">
+                    <v-card-text>
+                    <div>{{ output.num_likes }} likes</div>
+                    <div class="truncate">{{ output.plan_description }}</div>
+                    </v-card-text>
+                </v-col>
 
-              <v-col cols="6">
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="error"
-                    icon
-                    size="small"
-                    variant="plain"
-                    @click="toggleHeart(output.planId)"
-                  >
-                    <v-icon>{{
-                      heart ? "mdi-heart" : "mdi-heart-outline"
-                    }}</v-icon>
-                  </v-btn>
-                </v-card-actions>
-              </v-col>
+                <v-col cols="6">
+                    <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(output.planId)">
+                        <v-icon>{{ heart ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+                    </v-btn>
+                    </v-card-actions>
+                </v-col>
             </v-row>
           </v-card>
         </v-col>
@@ -175,3 +193,15 @@ export default {
 
   <DefaultFooter />
 </template>
+
+<style scoped>
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.card:hover {
+      transform: scale(1.05); /* Increase the size slightly */
+      transition: transform 0.2s ease; /* Add a smooth transition */
+}
+</style>
