@@ -100,6 +100,7 @@ export default {
       // get saved plan list of the user
       const docRef = doc(db, "Users", String(this.userEmail));
       const docSnap = await getDoc(docRef);
+      console.log(docSnap.data());
       console.log(docSnap.data().saved_list);
 
       // get all the plans out & put it into the list temp
@@ -152,8 +153,8 @@ export default {
       </v-row>
 
         <v-row>
-        <v-col v-for="output in filterer" cols="4"> <!-- :key="card.id" -->
-            <v-card class="mx-auto" max-width="330" max-height="250">
+        <v-col v-for="output in filterer" cols="4"> 
+            <v-card class="mx-auto card" max-width="330" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
 
             <v-img
             class="align-end text-white"
@@ -176,9 +177,6 @@ export default {
                 <v-col cols="6">
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="orange" v-on:click = "goToSinglePlan(output.planId)">
-                      Explore
-                    </v-btn>
                     <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(output.planId)">
                         <v-icon>{{ heart ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
                     </v-btn>
@@ -201,5 +199,9 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.card:hover {
+      transform: scale(1.05); /* Increase the size slightly */
+      transition: transform 0.2s ease; /* Add a smooth transition */
 }
 </style>
