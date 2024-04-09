@@ -7,10 +7,10 @@ defineProps({
     logo: String,
     route: "",
     default: () => ({
-      name: "VOY8GER",
+      name: "Material Kit 2",
       logo: logoDark,
-      route: "/",
-    }),
+      route: "/"
+    })
   },
   socials: {
     type: Array,
@@ -19,21 +19,25 @@ defineProps({
     default: () => [
       {
         icon: '<i class="fab fa-facebook text-lg opacity-8"></i>',
-        link: "https://www.facebook.com/singaporefoodie/",
+        link: "https://www.facebook.com/CreativeTim/"
       },
       {
         icon: '<i class="fab fa-twitter text-lg opacity-8"></i>',
-        link: "https://twitter.com/foodnetwork?lang=en",
+        link: "https://twitter.com/creativetim"
       },
       {
-        icon: '<i class="fab fa-instagram text-lg opacity-8"></i>',
-        link: "https://www.instagram.com/singapore.foodie/",
+        icon: '<i class="fab fa-dribbble text-lg opacity-8"></i>',
+        link: "https://dribbble.com/creativetim"
+      },
+      {
+        icon: '<i class="fab fa-github text-lg opacity-8"></i>',
+        link: "https://github.com/creativetimofficial"
       },
       {
         icon: '<i class="fab fa-youtube text-lg opacity-8"></i>',
-        link: "https://youtu.be/L8sPZIkKywA?si=gmIcGRTM4ZSU3We2",
-      },
-    ],
+        link: "https://www.youtube.com/channel/UCVyTG4sCw-rOvB9oHkzZD1w"
+      }
+    ]
   },
   menus: {
     type: Array,
@@ -41,31 +45,30 @@ defineProps({
     items: {
       type: Array,
       name: String,
-      href: String,
+      href: String
     },
     default: () => [
       {
         name: "company",
         items: [
+          
           {
             name: "about us",
-            href: "/about-us",
+            href: "/about-us"
           },
+          
           /*
           {
             name: "freebies",
-            href: "https://www.creative-tim.com/templates/free",
+            href: "https://www.creative-tim.com/templates/free"
           },
-          */
-
           {
             name: "premium tools",
-            href: "https://www.travelperk.com/business-travel/business-travel-management-global-1/?utm_source=google&utm_medium=cpc&utm_campaign=1250_G_SG_EN_GEN_PM_TravelManagement&utm_term=travel%20management%20tool&utm_content=&hl1=&gad_source=1&gclid=CjwKCAjwh4-wBhB3EiwAeJsppIfocPecGbpc2Ro-fsWhRXXjzoHtEveCvF507b--Vxwq2YbQmnd0xxoCMNYQAvD_BwE",
+            href: "https://www.creative-tim.com/templates/premium"
           },
-          { name: "blog", href: "https://eatbook.sg/" },
-          
-        ],
-
+          { name: "blog", href: "https://www.creative-tim.com/blog" }
+          */
+        ]
       },
       {
         name: "resources",
@@ -74,56 +77,59 @@ defineProps({
           { name: "illustrations", href: "https://iradesign.io/" },
           {
             name: "bits & snippets",
-            href: "https://www.creative-tim.com/bits",
+            href: "https://www.creative-tim.com/bits"
           },
-          */
           {
             name: "affiliate program",
-            href: "https://affiliates.expediagroup.com/en-us/home",
-          },
-          
-        ],
+            href: "https://www.creative-tim.com/affiliates/new"
+          }
+          */
+        ]
       },
       {
         name: "help & support",
         items: [
           {
             name: "contact us",
-            href: "/contact-us",
+            href: "/contact-us"
           },
-          
+          /*
           {
             name: "knowledge center",
-            href: "https://www.tripadvisor.com.sg/",
+            href: "https://www.creative-tim.com/knowledge-center"
+          },
+          {
+            name: "custom development",
+            href: "https://services.creative-tim.com/"
           },
           {
             name: "sponsorships",
-            href: "https://www.traveltechasia.com/sponsorship",
-          },
-          
-        ],
+            href: "https://www.creative-tim.com/sponsorships"
+          }
+          */
+        ]
       },
       {
         name: "legal",
         items: [
-          
+          /*
           {
             name: "terms & conditions",
-            href: "https://www.termsfeed.com/blog/sample-terms-and-conditions-template/",
+            href: "https://www.creative-tim.com/terms"
           },
           {
             name: "privacy policy",
-            href: "https://termly.io/resources/templates/privacy-policy-template/",
+            href: "https://www.creative-tim.com/privacy"
           },
           {
             name: "licenses (EULA)",
-            href: "https://www.pandadoc.com/license-agreement-template/",
-          },
-          
-        ],
-      },
-    ],
-  },
+            href: "https://www.creative-tim.com/license"
+          }
+          */
+        ]
+      }
+    ]
+  }
 });
 </script>
 <template>
@@ -162,14 +168,29 @@ defineProps({
         >
           <h6 class="text-sm">{{ name }}</h6>
           <ul class="flex-column ms-n3 nav">
-
             <li class="nav-item" v-for="item of items" :key="item.name">
+              <!--
+              <router-link v-if="item.name === 'about us'" :to="{ name: 'AboutUs' }" class="nav-link">{{ item.name }}</router-link>
+              <router-link v-else-if="item.name === 'contact us'" :to="{ name: 'ContactUs' }" class="nav-link">{{ item.name }}</router-link>
+              -->
               <a class="nav-link" :href="item.href" target="_blank">
                 {{ item.name }}
               </a>
             </li>
 
+          <!--
+            <li v-if="name === 'company'">
+              <router-link :to="{ name: 'AboutUs' }" class="nav-link">about us</router-link>
+            </li>
+
             
+            <li v-if="name === 'help & support'">
+              <router-link :to="{ name: 'ContactUs' }" class="nav-link">contact us</router-link>
+            </li>
+          -->
+          
+          
+
           </ul>
         </div>
 
@@ -178,9 +199,9 @@ defineProps({
             <p class="text-dark my-4 text-sm font-weight-normal">
               All rights reserved. Copyright ©
               {{ new Date().getFullYear() }}
-              VOY8GER by
+              Material Kit by
               <a href="https://www.creative-tim.com" target="_blank"
-                >BT3103 Team 13</a
+                >Creative Tim</a
               >.
             </p>
           </div>

@@ -7,6 +7,8 @@ import Explore from "../views/Explore.vue";
 import CreatePlan from "../views/CreatePlan.vue";
 import Favourites from "../views/Favourites.vue";
 import SinglePlan from "@/views/SinglePlan.vue";
+import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
+import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,8 +57,29 @@ const router = createRouter({
       path: "/SinglePlan",
       name: "SinglePlan",
       component: SinglePlan
-    }
+    },
+    /*
+    {
+      path: "/about-us",
+      name: "AboutUs",
+      component: () => import('@/views/LandingPages/AboutUs/AboutView.vue')
+    },
+    */
+    
+    {
+      path: "/about-us",
+      name: "AboutUs",
+      component: AboutView // Use the imported component directly
+    },
+    
+
+    {
+      path: '/contact-us', // Define the path for the contact us page
+      name: 'ContactUs',
+      component: ContactView,
+    },
   ],
 });
 
 export default router;
+
