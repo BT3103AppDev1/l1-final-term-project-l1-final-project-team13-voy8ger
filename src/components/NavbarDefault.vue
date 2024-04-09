@@ -17,7 +17,7 @@ const props = defineProps({
       route: "https://www.creative-tim.com/product/vue-material-kit",
       color: "bg-gradient-success",
       label: "Free Download",
-    })
+    }),
   },
   transparent: {
     type: Boolean,
@@ -97,7 +97,7 @@ watch(
       'my-3 blur border-radius-lg z-index-3 py-2 shadow py-2 start-0 end-0 mx-4 position-absolute mt-4':
         props.sticky,
       'navbar-light bg-white py-3': props.light,
-      ' navbar-dark bg-gradient-dark z-index-3 py-3': props.dark
+      ' navbar-dark bg-gradient-dark z-index-3 py-3': props.dark,
     }"
   >
     <div
@@ -114,11 +114,11 @@ watch(
         :class="[
           (props.transparent && textDark.value) || !props.transparent
             ? 'text-dark font-weight-bolder ms-sm-3'
-            : 'text-white font-weight-bolder ms-sm-3'
+            : 'text-white font-weight-bolder ms-sm-3',
         ]"
         :to="{ name: 'Home' }"
         rel="tooltip"
-        title="Designed and Coded by Creative Tim"
+        title="Designed and Coded by VOY8GER"
         data-placement="bottom"
       >
         V O Y 8 G E R
@@ -149,8 +149,11 @@ watch(
           </li>
 
           <li class="nav-item dropdown dropdown-hover mx-2">
-            <a
-              href="https://www.github.com/creativetimofficial/vue-material-kit"
+            <RouterLink
+              :to="{ name: 'Favourites' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
+              data-placement="bottom"
               class="nav-link d-flex cursor-pointer align-items-center"
             >
               Profile
@@ -174,11 +177,12 @@ watch(
           <li class="nav-item">
             <!-- define a sepeate function for sign in -->
             <a
-              href= "/login"
+              href="/login"
               class="btn btn-sm mb-0"
               :class="action.color"
-              onclick="smoothToPricing('pricing-soft-ui')" 
-              > Sign In</a
+              onclick="smoothToPricing('pricing-soft-ui')"
+            >
+              Sign In</a
             >
           </li>
           
