@@ -56,13 +56,14 @@ defineProps({
             name: "freebies",
             href: "https://www.creative-tim.com/templates/free",
           },
+          */
 
           {
             name: "premium tools",
             href: "https://www.travelperk.com/business-travel/business-travel-management-global-1/?utm_source=google&utm_medium=cpc&utm_campaign=1250_G_SG_EN_GEN_PM_TravelManagement&utm_term=travel%20management%20tool&utm_content=&hl1=&gad_source=1&gclid=CjwKCAjwh4-wBhB3EiwAeJsppIfocPecGbpc2Ro-fsWhRXXjzoHtEveCvF507b--Vxwq2YbQmnd0xxoCMNYQAvD_BwE",
           },
-          { name: "blog", href: "https://www.creative-tim.com/blog" },
-          */
+          { name: "blog", href: "https://eatbook.sg/" },
+          
         ],
 
       },
@@ -75,11 +76,12 @@ defineProps({
             name: "bits & snippets",
             href: "https://www.creative-tim.com/bits",
           },
+          */
           {
             name: "affiliate program",
             href: "https://affiliates.expediagroup.com/en-us/home",
           },
-          */
+          
         ],
       },
       {
@@ -89,7 +91,7 @@ defineProps({
             name: "contact us",
             href: "/contact-us",
           },
-          /*
+          
           {
             name: "knowledge center",
             href: "https://www.tripadvisor.com.sg/",
@@ -98,13 +100,13 @@ defineProps({
             name: "sponsorships",
             href: "https://www.traveltechasia.com/sponsorship",
           },
-          */
+          
         ],
       },
       {
         name: "legal",
         items: [
-          /*
+          
           {
             name: "terms & conditions",
             href: "https://www.termsfeed.com/blog/sample-terms-and-conditions-template/",
@@ -117,7 +119,7 @@ defineProps({
             name: "licenses (EULA)",
             href: "https://www.pandadoc.com/license-agreement-template/",
           },
-          */
+          
         ],
       },
     ],
