@@ -209,25 +209,9 @@ watch(
               Profile
             </RouterLink>
           </li>
+        </ul>
 
-          
         
-        </ul>
-
-        <!--
-        <ul class="navbar-nav d-lg-block d-none">
-          <li class="nav-item">
-            <a
-              href="/login"
-              class="btn btn-sm mb-0"
-              :class="action.color"
-              onclick="smoothToPricing('pricing-soft-ui')"
-            >
-              Sign In</a
-            >
-          </li>
-        </ul>
-      -->
 
         <ul class="navbar-nav d-lg-block d-none">
           <li class="nav-item">
