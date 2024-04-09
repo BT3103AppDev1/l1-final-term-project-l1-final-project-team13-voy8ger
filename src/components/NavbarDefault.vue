@@ -1,18 +1,41 @@
 <script setup>
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { ref, watch } from "vue";
 import { useWindowsWidth } from "../assets/js/useWindowsWidth";
 
-//import { auth } from '@/firebase'; // Import Firebase auth module
+import { auth } from '@/firebase'; // Import Firebase auth module
+
 
 
 // images
 import ArrDark from "@/assets/img/down-arrow-dark.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
 
+// Access authentication state from Firebase auth module
+const isAuthenticated = ref(false); // Initialize as false initially
+const router = useRouter();
+
+// Function to handle sign in
+async function handleSignIn() {
+  router.push('/login'); // Redirect to login page
+}
+
+// Function to handle sign out
+async function handleSignOut() {
+  try {
+    await auth.signOut(); // Call Firebase's signOut method
+    router.push('/'); // Redirect to home page after signing out
+  } catch (error) {
+    console.error('Error signing out:', error.message);
+  }
+}
+
+auth.onAuthStateChanged(user => {
+  isAuthenticated.value = !!user; // Update isAuthenticated based on user authentication status
+});
 
 
-
+//dont change
 const props = defineProps({
   action: {
     type: Object,
@@ -206,17 +229,17 @@ watch(
         </ul>
       -->
 
-      <ul class="navbar-nav d-lg-block d-none">
-        <li class="nav-item">
-          <!-- Conditional rendering based on authentication status -->
-          <button v-if="!isAuthenticated" @click="handleSignIn" class="btn btn-sm mb-0" :class="action.color">
-          Sign In
-          </button>
-          <button v-else @click="handleSignOut" class="btn btn-sm mb-0" :class="action.color">
-            Sign Out
-          </button>
-        </li>
-      </ul>
+        <ul class="navbar-nav d-lg-block d-none">
+          <li class="nav-item">
+            <!-- Conditional rendering based on authentication status -->
+            <button v-if="!isAuthenticated" @click="handleSignIn" class="btn btn-sm mb-0" :class="action.color">
+              Sign In
+            </button>
+            <button v-else @click="handleSignOut" class="btn btn-sm mb-0" :class="action.color">
+              Sign Out
+            </button>
+          </li>
+        </ul>
     
       
       
