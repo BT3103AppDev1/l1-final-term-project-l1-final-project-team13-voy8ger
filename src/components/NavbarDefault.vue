@@ -128,7 +128,8 @@ watch(
         id="navigation"
       >
         <ul class="navbar-nav navbar-nav-hover ms-auto">
-
+          
+          <!--
           <li class="nav-item dropdown dropdown-hover mx-2">
             <a
               href="https://www.github.com/creativetimofficial/vue-material-kit"
@@ -138,14 +139,29 @@ watch(
               Explore
             </a>
           </li>
-
+        -->
+        <li class="nav-item dropdown dropdown-hover mx-2">
+            <RouterLink
+              :to="{ name: 'Explore' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
+              data-placement="bottom"
+              class="nav-link d-flex cursor-pointer align-items-center"
+            >
+              Explore
+            </RouterLink>
+          </li>
+          
           <li class="nav-item dropdown dropdown-hover mx-2">
-            <a
-              href="https://www.github.com/creativetimofficial/vue-material-kit"
+            <RouterLink
+              :to="{ name: 'CreatePlan' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
+              data-placement="bottom"
               class="nav-link d-flex cursor-pointer align-items-center"
             >
               Create
-            </a>
+            </RouterLink>
           </li>
 
           <li class="nav-item dropdown dropdown-hover mx-2">
@@ -156,19 +172,23 @@ watch(
               data-placement="bottom"
               class="nav-link d-flex cursor-pointer align-items-center"
             >
+              Favourites
+            </RouterLink>
+          </li>
+
+          <li class="nav-item dropdown dropdown-hover mx-2">
+            <RouterLink
+              :to="{ name: 'Profile' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
+              data-placement="bottom"
+              class="nav-link d-flex cursor-pointer align-items-center"
+            >
               Profile
             </RouterLink>
           </li>
 
           
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <a
-              href="https://www.github.com/creativetimofficial/vue-material-kit"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
-              Favourites
-            </a>
-          </li>
         
         </ul>
         
