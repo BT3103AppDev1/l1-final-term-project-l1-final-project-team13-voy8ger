@@ -3,9 +3,15 @@ import { RouterLink } from "vue-router";
 import { ref, watch } from "vue";
 import { useWindowsWidth } from "../assets/js/useWindowsWidth";
 
+//import { auth } from '@/firebase'; // Import Firebase auth module
+
+
 // images
 import ArrDark from "@/assets/img/down-arrow-dark.svg";
 import DownArrWhite from "@/assets/img/down-arrow-white.svg";
+
+
+
 
 const props = defineProps({
   action: {
@@ -86,6 +92,8 @@ watch(
     }
   }
 );
+
+
 </script>
 
 <template>
@@ -182,11 +190,10 @@ watch(
           
         
         </ul>
-        
-        <ul class="navbar-nav d-lg-block d-none">
 
+        <!--
+        <ul class="navbar-nav d-lg-block d-none">
           <li class="nav-item">
-            <!-- define a sepeate function for sign in -->
             <a
               href="/login"
               class="btn btn-sm mb-0"
@@ -196,8 +203,23 @@ watch(
               Sign In</a
             >
           </li>
-          
         </ul>
+      -->
+
+      <ul class="navbar-nav d-lg-block d-none">
+        <li class="nav-item">
+          <!-- Conditional rendering based on authentication status -->
+          <button v-if="!isAuthenticated" @click="handleSignIn" class="btn btn-sm mb-0" :class="action.color">
+          Sign In
+          </button>
+          <button v-else @click="handleSignOut" class="btn btn-sm mb-0" :class="action.color">
+            Sign Out
+          </button>
+        </li>
+      </ul>
+    
+      
+      
 
       </div>
     </div>
