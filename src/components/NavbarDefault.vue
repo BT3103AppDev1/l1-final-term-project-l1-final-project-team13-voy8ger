@@ -157,7 +157,7 @@ watch(
               class="nav-link d-flex cursor-pointer align-items-center"
             >
               Profile
-            </a>
+            </RouterLink>
           </li>
 
           
