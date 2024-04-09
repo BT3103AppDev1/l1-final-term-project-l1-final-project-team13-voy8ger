@@ -51,12 +51,7 @@ defineProps({
             name: "about us",
             href: "/about-us",
           },
-          /*
-          {
-            name: "freebies",
-            href: "https://www.creative-tim.com/templates/free",
-          },
-          */
+          
 
           {
             name: "premium tools",
@@ -70,13 +65,7 @@ defineProps({
       {
         name: "resources",
         items: [
-          /*
-          { name: "illustrations", href: "https://iradesign.io/" },
-          {
-            name: "bits & snippets",
-            href: "https://www.creative-tim.com/bits",
-          },
-          */
+          
           {
             name: "affiliate program",
             href: "https://affiliates.expediagroup.com/en-us/home",
