@@ -9,7 +9,7 @@
   <div class="page-header min-vh-90" loading="lazy">
     <v-container>
       <div
-        class="d-flex flex-row justify-content-between align-items-center mb-3"
+        class="d-flex flex-row justify-content-between align-items-center mb-3 mt-15"
       >
         <div class="d-flex flex-column">
           <v-avatar size="100" class="mb-2">
