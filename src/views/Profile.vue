@@ -9,7 +9,7 @@
   <div class="page-header min-vh-90" loading="lazy">
     <v-container>
       <div
-        class="d-flex flex-row justify-content-between align-items-center mb-3 mt-15"
+        class="d-flex flex-row justify-content-between align-items-center mb-3 mt-10"
       >
         <div class="d-flex flex-column">
           <v-avatar size="100" class="mb-2">
@@ -40,6 +40,7 @@
       </div>
       <div class="profile">
         <p>{{ user.bio }}</p>
+        <v-btn class="w-50 mb-5" @click="goEdit">Edit Profile</v-btn>
         <v-row>
           <v-col v-for="output in user.plans" :key="output.planId" cols="4">
             <v-card class="mx-auto" max-width="300" max-height="250">
@@ -196,6 +197,9 @@ export default {
 
       console.log("created temp: " + this.user.plans);
       console.log("saved temp: " + this.user.saved);
+    },
+    goEdit() {
+      this.$router.push("/editprfle");
     },
   },
 };

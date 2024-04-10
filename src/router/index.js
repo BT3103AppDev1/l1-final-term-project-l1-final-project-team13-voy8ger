@@ -9,6 +9,7 @@ import Favourites from "../views/Favourites.vue";
 import SinglePlan from "@/views/SinglePlan.vue";
 import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
 import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
+import EditProfile from "@/views/EditProfile.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,11 @@ const router = createRouter({
       path: "/prfle",
       name: "Profile",
       component: Profile,
+    },
+    {
+      path: "/editprfle",
+      name: "EditProfile",
+      component: EditProfile,
     },
     {
       path: "/home",
