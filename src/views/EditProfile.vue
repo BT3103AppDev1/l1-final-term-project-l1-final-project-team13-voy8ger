@@ -16,10 +16,13 @@
         <div v-else id="no-image">No Image</div>
         <input
           type="file"
+          ref="fileInput"
           id="profilePicture"
-          @change="previewImage, uploadPhoto"
+          @change="previewImage"
           accept="image/*"
+          style="display: none"
         />
+        <v-btn @click="getFile">Upload Photo</v-btn>
       </div>
       <div>
         <label for="bio">Bio:</label>
@@ -55,11 +58,12 @@ export default {
   name: "EditProfile",
   data() {
     return {
-      user : {
+      user: {
         email: "",
       },
-      profilePicture: ref(""),
-      bio: ref(""),
+      profilePicture: null, // temp blob url
+      profilePictureFile: null,
+      bio: "",
     };
   },
 
@@ -74,56 +78,54 @@ export default {
   },
 
   methods: {
-    async updateProfile() {
-      try {
-        const auth = getAuth();
-        const user = auth.currentUser;
-
-        // Update profile picture
-        if (this.profilePicture.value) {
-          const storageRef = storage.ref();
-          const fileRef = storageRef.child(`profilePictures/${user.uid}`);
-          await fileRef.put(this.profilePicture.value);
-          const imageUrl = await fileRef.getDownloadURL();
-          await updateDoc(doc(db, "Users", user.uid), {
-            profilePicture: imageUrl,
-          });
-        }
-
-        // Update bio
-        await updateDoc(doc(db, "Users", user.uid), {
-          bio: this.bio.value,
-        });
-
-        alert("Profile updated successfully!");
-      } catch (error) {
-        console.error("Error updating profile:", error.message);
-      }
-    },
-    async uploadPhoto(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const fileRef = storageRef(storage, `ProfilePictures/${file.name}`);
-
-      try {
-        const uploadResult = await uploadBytes(fileRef, file);
-        const downloadURL = await getDownloadURL(uploadResult.ref);
-      } catch (error) {
-        console.error("Error uploading file:", error);
-      }
-    },
     goBack() {
       this.$router.push("/prfle");
     },
+    getFile() {
+      this.$refs.fileInput.click();
+    },
     previewImage(event) {
       const file = event.target.files[0];
+      this.profilePictureFile = file;
+      //allow user to preview photo without actually uploading the photo
+      //photo only uploaded when user clicks save changes
       if (file) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
           this.profilePicture = reader.result;
         };
+      }
+    },
+    async updateProfile() {
+      const file = this.profilePictureFile;
+      let imageUrl = "";
+
+      if (file) {
+        const fileRef = storageRef(storage, `ProfilePictures/${file.name}`);
+        try {
+          const uploadResult = await uploadBytes(fileRef, file);
+          imageUrl = await getDownloadURL(uploadResult.ref);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
+      }
+      try {
+        // Update profile picture
+        if (imageUrl !== "") {
+          await updateDoc(doc(db, "Users", String(this.user.email)), {
+            profilePicture: imageUrl,
+          });
+        }
+
+        // Update bio
+        if (this.bio !== "") {
+          await updateDoc(doc(db, "Users", String(this.user.email)), {
+            bio: this.bio,
+          });
+        }
+      } catch (error) {
+        console.error("Error updating profile:", error.message);
       }
     },
   },
