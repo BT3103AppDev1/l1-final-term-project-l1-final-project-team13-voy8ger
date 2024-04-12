@@ -22,11 +22,11 @@
           accept="image/*"
           style="display: none"
         />
-        <v-btn @click="getFile">Upload Photo</v-btn>
+        <v-btn @click="getFile" class="mb-2">Upload Photo</v-btn>
       </div>
       <div>
-        <label for="bio">Bio:</label>
-        <textarea id="bio" v-model="bio"></textarea>
+        <label for="bio" class="mr-2">Bio:</label>
+        <textarea id="bio" v-model="bio" class="form-control border mb-2"></textarea>
       </div>
       <v-btn @click="updateProfile">Save Changes</v-btn>
     </form>
