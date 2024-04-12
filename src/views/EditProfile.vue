@@ -73,11 +73,18 @@ export default {
       console.log(user);
       if (user) {
         this.user.email = user.email;
+        this.fetchUserData();
       }
     });
   },
 
   methods: {
+    async fetchUserData() {
+      const docSnap = await getDoc(doc(db, "Users", String(this.user.email)));
+      const data = docSnap.data();
+      this.profilePicture = data.profilePicture;
+      this.bio = data.bio;
+    },
     goBack() {
       this.$router.push("/prfle");
     },
