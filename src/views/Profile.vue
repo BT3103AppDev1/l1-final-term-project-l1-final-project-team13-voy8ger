@@ -14,8 +14,8 @@
         <div class="d-flex flex-column">
           <v-avatar size="100" class="mb-2">
             <img
-              src="https://cdn.vuetifyjs.com/images/john.jpg"
-              alt="John Doe"
+              :src="user.profilePic"
+              alt="user profile picture"
             />
           </v-avatar>
           <h4>{{ user.name }}</h4>
@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="profile">
-        <p>{{ user.bio }}</p>
+          <p v-if="user.bio !=null">{{ user.bio }}</p>
         <v-btn class="w-50 mb-5" @click="goEdit">Edit Profile</v-btn>
         <v-row>
           <v-col v-for="output in user.plans" :key="output.planId" cols="4">
@@ -118,7 +118,8 @@ export default {
         id: "",
         name: "John Doe",
         email: "",
-        bio: "I'm a software developer",
+        profilePic: "https://cdn.vuetifyjs.com/images/john.jpg",
+        bio: null,
         plans: [],
         saved: [],
       },
@@ -185,6 +186,15 @@ export default {
       this.user.id = docSnap.data().username;
       this.user.name = docSnap.data().Name;
       this.user.email = docSnap.data().email;
+      if (
+        docSnap.data().profilePicture != null &&
+        docSnap.data().profilePicture != ""
+      ) {
+        this.user.profilePic = docSnap.data().profilePicture;
+      }
+      if (docSnap.data().bio != null && docSnap.data().bio != "") {
+        this.user.bio = docSnap.data().bio;
+      }
 
       console.log("created: " + docSnap.data().plans_list);
       console.log("saved: " + docSnap.data().saved_list);

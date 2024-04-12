@@ -112,14 +112,14 @@ export default {
       }
       try {
         // Update profile picture
-        if (imageUrl !== "") {
+        if (imageUrl != "") {
           await updateDoc(doc(db, "Users", String(this.user.email)), {
             profilePicture: imageUrl,
           });
         }
 
         // Update bio
-        if (this.bio !== "") {
+        if (this.bio != "") {
           await updateDoc(doc(db, "Users", String(this.user.email)), {
             bio: this.bio,
           });
