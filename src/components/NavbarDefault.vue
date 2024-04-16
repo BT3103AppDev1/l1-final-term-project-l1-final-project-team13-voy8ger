@@ -183,56 +183,13 @@ watch(
             <RouterLink class="nav-link" :to="{ name: 'CreatePlan' }">Create</RouterLink>
           </li>
 
-          <!--
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <RouterLink
-              :to="{ name: 'CreatePlan' }"
-              rel="tooltip"
-              title="Designed and Coded by VOY8GER"
-              data-placement="bottom"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
-              Create
-            </RouterLink>
-          </li>
-        -->
-
           <li v-if="isAuthenticated" class="nav-item">
             <RouterLink class="nav-link" :to="{ name: 'Favourites' }">Favourites</RouterLink>
           </li>
 
-          <!--
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <RouterLink
-              :to="{ name: 'Favourites' }"
-              rel="tooltip"
-              title="Designed and Coded by VOY8GER"
-              data-placement="bottom"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
-              Favourites
-            </RouterLink>
-          </li>
-        -->
-
           <li v-if="isAuthenticated" class="nav-item">
             <RouterLink class="nav-link" :to="{ name: 'Profile' }">Profile</RouterLink>
           </li>
-          <!--
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <RouterLink
-              :to="{ name: 'Profile' }"
-              rel="tooltip"
-              title="Designed and Coded by VOY8GER"
-              data-placement="bottom"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
-              Profile
-            </RouterLink>
-          </li>
-        -->
-
-    
         </ul>
 
         
