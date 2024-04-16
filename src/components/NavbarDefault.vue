@@ -154,14 +154,20 @@ watch(
       >
         V O Y 8 G E R
       </RouterLink>
-      <div
-        class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0"
-        id="navigation"
-      >
-        <ul class="navbar-nav navbar-nav-hover ms-auto">
-          
 
-        <li class="nav-item dropdown dropdown-hover mx-2">
+      <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
+
+        <ul class="navbar-nav navbar-nav-hover ms-auto">
+
+          <li v-if="!isAuthenticated" class="nav-item">
+            <RouterLink class="nav-link" :to="{ name: 'AboutUs' }">About Us</RouterLink>
+          </li>
+
+          <li v-if="!isAuthenticated" class="nav-item">
+            <RouterLink class="nav-link" :to="{ name: 'ContactUs' }">Contact Us</RouterLink>
+          </li>
+
+          <li class="nav-item dropdown dropdown-hover mx-2">
             <RouterLink
               :to="{ name: 'Explore' }"
               rel="tooltip"
@@ -173,41 +179,16 @@ watch(
             </RouterLink>
           </li>
 
-          
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <RouterLink
-              :to="{ name: 'CreatePlan' }"
-              rel="tooltip"
-              title="Designed and Coded by VOY8GER"
-              data-placement="bottom"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
-              Create
-            </RouterLink>
+          <li v-if="isAuthenticated" class="nav-item">
+            <RouterLink class="nav-link" :to="{ name: 'CreatePlan' }">Create</RouterLink>
           </li>
 
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <RouterLink
-              :to="{ name: 'Favourites' }"
-              rel="tooltip"
-              title="Designed and Coded by VOY8GER"
-              data-placement="bottom"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
-              Favourites
-            </RouterLink>
+          <li v-if="isAuthenticated" class="nav-item">
+            <RouterLink class="nav-link" :to="{ name: 'Favourites' }">Favourites</RouterLink>
           </li>
 
-          <li class="nav-item dropdown dropdown-hover mx-2">
-            <RouterLink
-              :to="{ name: 'Profile' }"
-              rel="tooltip"
-              title="Designed and Coded by VOY8GER"
-              data-placement="bottom"
-              class="nav-link d-flex cursor-pointer align-items-center"
-            >
-              Profile
-            </RouterLink>
+          <li v-if="isAuthenticated" class="nav-item">
+            <RouterLink class="nav-link" :to="{ name: 'Profile' }">Profile</RouterLink>
           </li>
         </ul>
 
