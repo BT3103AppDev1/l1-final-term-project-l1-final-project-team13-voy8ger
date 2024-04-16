@@ -10,6 +10,7 @@
   import LogIn from './views/Auth/LogIn.vue';
   import Home from './views/Home.vue';
   import Profile from './views/Profile.vue';
+  import EditProfile from './views/EditProfile.vue';
   import Favourites from "./views/Favourites.vue";
   import SinglePlan from "./views/SinglePlan.vue";
 
@@ -20,6 +21,7 @@
       LogIn,
       Home,
       Profile,
+      EditProfile,
       Favourites,
       SinglePlan
     }
