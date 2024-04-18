@@ -9,13 +9,13 @@
   <div class="page-header min-vh-90" loading="lazy">
     <v-container>
       <div
-        class="d-flex flex-row justify-content-between align-items-center mb-3"
+        class="d-flex flex-row justify-content-between align-items-center mb-3 mt-10"
       >
         <div class="d-flex flex-column">
           <v-avatar size="100" class="mb-2">
             <img
-              src="https://cdn.vuetifyjs.com/images/john.jpg"
-              alt="John Doe"
+              :src="user.profilePic"
+              alt="user profile picture"
             />
           </v-avatar>
           <h4>{{ user.name }}</h4>
@@ -39,7 +39,8 @@
         </div>
       </div>
       <div class="profile">
-        <p>{{ user.bio }}</p>
+          <p v-if="user.bio !=null">{{ user.bio }}</p>
+        <v-btn class="w-50 mb-5" @click="goEdit">Edit Profile</v-btn>
         <v-row>
           <v-col v-for="output in user.plans" :key="output.planId" cols="4">
             <v-card class="mx-auto" max-width="300" max-height="250">
@@ -117,7 +118,8 @@ export default {
         id: "",
         name: "John Doe",
         email: "",
-        bio: "I'm a software developer",
+        profilePic: "https://cdn.vuetifyjs.com/images/john.jpg",
+        bio: null,
         plans: [],
         saved: [],
       },
@@ -184,6 +186,15 @@ export default {
       this.user.id = docSnap.data().username;
       this.user.name = docSnap.data().Name;
       this.user.email = docSnap.data().email;
+      if (
+        docSnap.data().profilePicture != null &&
+        docSnap.data().profilePicture != ""
+      ) {
+        this.user.profilePic = docSnap.data().profilePicture;
+      }
+      if (docSnap.data().bio != null && docSnap.data().bio != "") {
+        this.user.bio = docSnap.data().bio;
+      }
 
       console.log("created: " + docSnap.data().plans_list);
       console.log("saved: " + docSnap.data().saved_list);
@@ -196,6 +207,9 @@ export default {
 
       console.log("created temp: " + this.user.plans);
       console.log("saved temp: " + this.user.saved);
+    },
+    goEdit() {
+      this.$router.push("/editprfle");
     },
   },
 };

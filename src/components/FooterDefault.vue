@@ -7,7 +7,7 @@ defineProps({
     logo: String,
     route: "",
     default: () => ({
-      name: "Material Kit 2",
+      name: "VOY8GER",
       logo: logoDark,
       route: "/",
     }),
@@ -19,23 +19,19 @@ defineProps({
     default: () => [
       {
         icon: '<i class="fab fa-facebook text-lg opacity-8"></i>',
-        link: "https://www.facebook.com/CreativeTim/",
+        link: "https://www.facebook.com/singaporefoodie/",
       },
       {
         icon: '<i class="fab fa-twitter text-lg opacity-8"></i>',
-        link: "https://twitter.com/creativetim",
+        link: "https://twitter.com/foodnetwork?lang=en",
       },
       {
-        icon: '<i class="fab fa-dribbble text-lg opacity-8"></i>',
-        link: "https://dribbble.com/creativetim",
-      },
-      {
-        icon: '<i class="fab fa-github text-lg opacity-8"></i>',
-        link: "https://github.com/creativetimofficial",
+        icon: '<i class="fab fa-instagram text-lg opacity-8"></i>',
+        link: "https://www.instagram.com/singapore.foodie/",
       },
       {
         icon: '<i class="fab fa-youtube text-lg opacity-8"></i>',
-        link: "https://www.youtube.com/channel/UCVyTG4sCw-rOvB9oHkzZD1w",
+        link: "https://youtu.be/L8sPZIkKywA?si=gmIcGRTM4ZSU3We2",
       },
     ],
   },
@@ -53,31 +49,28 @@ defineProps({
         items: [
           {
             name: "about us",
-            href: "https://www.creative-tim.com/presentation",
+            href: "/about-us",
           },
-          {
-            name: "freebies",
-            href: "https://www.creative-tim.com/templates/free",
-          },
+          
+
           {
             name: "premium tools",
-            href: "https://www.creative-tim.com/templates/premium",
+            href: "https://www.travelperk.com/business-travel/business-travel-management-global-1/?utm_source=google&utm_medium=cpc&utm_campaign=1250_G_SG_EN_GEN_PM_TravelManagement&utm_term=travel%20management%20tool&utm_content=&hl1=&gad_source=1&gclid=CjwKCAjwh4-wBhB3EiwAeJsppIfocPecGbpc2Ro-fsWhRXXjzoHtEveCvF507b--Vxwq2YbQmnd0xxoCMNYQAvD_BwE",
           },
-          { name: "blog", href: "https://www.creative-tim.com/blog" },
+          { name: "blog", href: "https://eatbook.sg/" },
+          
         ],
+
       },
       {
         name: "resources",
         items: [
-          { name: "illustrations", href: "https://iradesign.io/" },
-          {
-            name: "bits & snippets",
-            href: "https://www.creative-tim.com/bits",
-          },
+          
           {
             name: "affiliate program",
-            href: "https://www.creative-tim.com/affiliates/new",
+            href: "https://affiliates.expediagroup.com/en-us/home",
           },
+          
         ],
       },
       {
@@ -85,37 +78,37 @@ defineProps({
         items: [
           {
             name: "contact us",
-            href: "https://www.creative-tim.com/contact-us",
+            href: "/contact-us",
           },
+          
           {
             name: "knowledge center",
-            href: "https://www.creative-tim.com/knowledge-center",
-          },
-          {
-            name: "custom development",
-            href: "https://services.creative-tim.com/",
+            href: "https://www.tripadvisor.com.sg/",
           },
           {
             name: "sponsorships",
-            href: "https://www.creative-tim.com/sponsorships",
+            href: "https://www.traveltechasia.com/sponsorship",
           },
+          
         ],
       },
       {
         name: "legal",
         items: [
+          
           {
             name: "terms & conditions",
-            href: "https://www.creative-tim.com/terms",
+            href: "https://www.termsfeed.com/blog/sample-terms-and-conditions-template/",
           },
           {
             name: "privacy policy",
-            href: "https://www.creative-tim.com/privacy",
+            href: "https://termly.io/resources/templates/privacy-policy-template/",
           },
           {
             name: "licenses (EULA)",
-            href: "https://www.creative-tim.com/license",
+            href: "https://www.pandadoc.com/license-agreement-template/",
           },
+          
         ],
       },
     ],
@@ -158,11 +151,14 @@ defineProps({
         >
           <h6 class="text-sm">{{ name }}</h6>
           <ul class="flex-column ms-n3 nav">
+
             <li class="nav-item" v-for="item of items" :key="item.name">
               <a class="nav-link" :href="item.href" target="_blank">
                 {{ item.name }}
               </a>
             </li>
+
+            
           </ul>
         </div>
 
@@ -171,9 +167,9 @@ defineProps({
             <p class="text-dark my-4 text-sm font-weight-normal">
               All rights reserved. Copyright ©
               {{ new Date().getFullYear() }}
-              Material Kit by
+              VOY8GER by
               <a href="https://www.creative-tim.com" target="_blank"
-                >Creative Tim</a
+                >BT3103 Team 13</a
               >.
             </p>
           </div>
