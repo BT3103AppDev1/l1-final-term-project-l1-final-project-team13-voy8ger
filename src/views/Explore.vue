@@ -21,6 +21,7 @@ export default {
       allPlans: [],
       tempArray: [],
       temp: [],
+      favorites: [],
       length: 3,
     };
   },
@@ -31,10 +32,28 @@ export default {
         this.user = user;
         this.userEmail = user.email;
         this.fetchPlans();
+        this.fetchAndUpdateData(this.userEmail);
       }
     });
   },
   methods: {
+
+    async fetchAndUpdateData(userEmail) {
+      // get saved plan list of the user
+      const docRef = doc(db, "Users", String(this.userEmail));
+      const docSnap = await getDoc(docRef);
+      console.log(docSnap.data());
+      console.log(docSnap.data().saved_list);
+
+      // get all the plans out & put it into the list temp
+      const val = docSnap.data().saved_list.map(async (element) => {
+        // this.favorites.push((await getDoc(doc(db, "Plans", element))).data());
+        this.favorites.push(element);
+      });
+
+      console.log(this.favorites);
+    },
+
     async fetchPlans() {
       const querySnapshot = await getDocs(collection(db, "Plans"));
       this.allPlans = querySnapshot.docs.map((doc) => doc.data());
@@ -53,10 +72,35 @@ export default {
           await this.addListItem(docRef, docSnap, "saved_list", planName);
           console.log(`Plan ${planName} added to favourites.`);
         } else {
-          console.log(`Plan ${planName} is already in favourites.`);
+          await this.deleteListItem(docRef, docSnap, "saved_list", planName);
+          console.log(`Plan ${planName} is removed from favourites.`);
         }
-
+        this.favorites = [];
+      // refresh the rest
+        this.fetchAndUpdateData(String(this.userEmail));
         this.fetchPlans();
+      }
+    },
+    async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
+      try {
+        if (docSnap.exists()) {
+          // Get the data from the document
+          const data = docSnap.data();
+          // Get the list from the document data
+          const list = data[listFieldName];
+          console.log(list);
+          // Remove the item from the list
+          const updatedList = list.filter((item) => item !== itemToRemove);
+          // Update the document with the modified list
+          await updateDoc(docRef, {
+            [listFieldName]: updatedList,
+          });
+          console.log("Item removed from the list:", itemToRemove);
+        } else {
+          console.log("Document does not exist!");
+        }
+      } catch (error) {
+        console.error("Error removing item from list:", error);
       }
     },
     async addListItem(docRef, docSnap, listFieldName, itemAdd) {
@@ -75,6 +119,19 @@ export default {
       this.tempArray = this.allPlans.slice();
       this.temp = this.tempArray.slice(0, this.length);
     },
+    heartColor(planId) {
+      console.log('heart color is determined');
+      return this.favorites.includes(planId) ? 'mdi-heart':'mdi-heart-outline';
+
+    },
+    goToSinglePlan(planId) {
+      console.log(planId);
+      // go to the singlePlan view and send the planId
+      // so that details related to this plan can be retrived there
+      this.$router.push({ name: "SinglePlan", query: {
+        id: planId
+      } });
+    }
   },
 };
 </script>
@@ -102,7 +159,7 @@ export default {
       <v-row>
         <v-col v-for="output in temp" cols="4">
           <!-- :key="card.id" -->
-          <v-card class="mx-auto" max-width="300" max-height="250">
+          <v-card class="mx-auto" max-width="300" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
             <v-img
               height="150px"
               src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
@@ -128,7 +185,8 @@ export default {
                     @click="toggleHeart(output.planId)"
                   >
                     <v-icon>{{
-                      heart ? "mdi-heart" : "mdi-heart-outline"
+                      // heart ? "mdi-heart" : "mdi-heart-outline"
+                      heartColor(output.planId)
                     }}</v-icon>
                   </v-btn>
                 </v-card-actions>

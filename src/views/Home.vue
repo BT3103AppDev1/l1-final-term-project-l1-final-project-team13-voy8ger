@@ -35,11 +35,12 @@ onUnmounted(() => {
 export default {
   data() {
     return {
-      heart: false, // Initially, the heart icon is not filled as it is in the explore page
       user: "",
       userEmail: "",
       temp: [],
+      tempArray: [],
       allPlans: [],
+      favorites: [],
     };
   },
 
@@ -58,29 +59,58 @@ export default {
   },
 
   methods: {
-    async fetchPlans() {
-      const querySnapshot = await getDocs(collection(db, "Plans"));
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        this.allPlans.push(doc.data());
-        this.allPlans = this.allPlans.slice(0, 3);
-      });
-    },
-    async toggleHeart(plan_Name) {
-      // get document of that user
+    async fetchAndUpdateData(userEmail) {
+      // get saved plan list of the user
       const docRef = doc(db, "Users", String(this.userEmail));
       const docSnap = await getDoc(docRef);
+      console.log(docSnap.data());
+      console.log(docSnap.data().saved_list);
 
-      // add that plan to my favourites
-      await this.addListItem(docRef, docSnap, "saved_list", plan_Name);
-      // empty the current list of fav plans of this user
-      this.temp = [];
-      // refresh the rest
-      this.fetchAndUpdateData(String(this.userEmail));
+      // get all the plans out & put it into the list temp
+      const val = docSnap.data().saved_list.map(async (element) => {
+        // this.favorites.push((await getDoc(doc(db, "Plans", element))).data());
+        this.favorites.push(element);
+      });
+      
+      console.log(this.favorites);
     },
+   
+    async fetchPlans() {
+      const querySnapshot = await getDocs(collection(db, "Plans"));
+      this.allPlans = querySnapshot.docs.map((doc) => doc.data());
+      function compare(a, b) {
+        if (a.num_likes < b.num_likes)
+          return 1;
+        if (a.num_likes > b.num_likes)
+          return -1;
+        return 0;
+      }
+      this.tempArray = this.allPlans.slice();
+      this.temp = this.tempArray.sort(compare).slice(0, 3);
+    },
+    async toggleHeart(planName) {
+      const docRef = doc(db, "Users", this.userEmail);
+      const docSnap = await getDoc(docRef);
 
-    async addListItem(docRef, docSnap, listFieldName, itemAdd) {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const savedList = data.saved_list || [];
+        console.log(savedList);
+        if (!savedList.includes(planName)) {
+          await this.addListItem(docRef, docSnap, "saved_list", planName);
+          console.log(`Plan ${planName} added to favourites.`);
+        } else {
+          await this.deleteListItem(docRef, docSnap, "saved_list", planName);
+          console.log(`Plan ${planName} is removed from favourites.`);
+        }
+        this.favorites = [];
+      // refresh the rest
+        this.fetchAndUpdateData(String(this.userEmail));
+        this.fetchPlans();
+        
+      }
+    },
+    async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
       try {
         if (docSnap.exists()) {
           // Get the data from the document
@@ -88,36 +118,48 @@ export default {
           // Get the list from the document data
           const list = data[listFieldName];
           console.log(list);
-          // Add the item to the list
-          const updatedList = list.push(itemAdd);
+          // Remove the item from the list
+          const updatedList = list.filter((item) => item !== itemToRemove);
           // Update the document with the modified list
           await updateDoc(docRef, {
             [listFieldName]: updatedList,
           });
-          console.log("Item added to the list:", itemAdd);
+          console.log("Item removed from the list:", itemToRemove);
         } else {
           console.log("Document does not exist!");
         }
       } catch (error) {
-        console.error("Error adding item to list:", error);
+        console.error("Error removing item from list:", error);
       }
     },
-
-    async fetchAndUpdateData(userEmail) {
-      // get saved plan list of the user
-
-      const docRef = doc(db, "Users", String(this.userEmail));
-      const docSnap = await getDoc(docRef);
-      console.log(docSnap.data().saved_list);
-
-      // get all the plans out & put it into the list temp
-      const val = docSnap.data().saved_list.map(async (element) => {
-        this.temp.push((await getDoc(doc(db, "Plans", element))).data());
-      });
-
-      console.log(this.temp);
+    async addListItem(docRef, docSnap, listFieldName, itemAdd) {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const list = data[listFieldName] || [];
+        list.push(itemAdd);
+        await updateDoc(docRef, {
+          [listFieldName]: list,
+        });
+      }
     },
+    heartColor(planId) {
+      console.log('heart color is determined');
+      return this.favorites.includes(planId) ? 'mdi-heart':'mdi-heart-outline';
+
+    },
+    goToSinglePlan(planId) {
+      console.log(planId);
+      // go to the singlePlan view and send the planId
+      // so that details related to this plan can be retrived there
+      this.$router.push({ name: "SinglePlan", query: {
+        id: planId
+      } });
+    }
+
+    
+
   },
+  
 };
 </script>
 <template>
@@ -194,9 +236,9 @@ export default {
       </v-col>
     </v-row>
     <v-row align="center" justify="center">
-      <v-col v-for="output in allPlans" cols="4">
+      <v-col v-for="output in temp" cols="4">
         <!-- :key="card.id" -->
-        <v-card class="mx-auto" max-width="300" max-height="250">
+        <v-card class="mx-auto" max-width="300" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
           <v-img
             height="150px"
             src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
@@ -222,9 +264,10 @@ export default {
                   @click="toggleHeart(output.planId)"
                 >
                   <v-icon>{{
-                    heart ? "mdi-heart" : "mdi-heart-outline"
+                    heartColor(output.planId)
                   }}</v-icon>
                 </v-btn>
+                
               </v-card-actions>
             </v-col>
           </v-row>
