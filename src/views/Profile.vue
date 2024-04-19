@@ -42,7 +42,7 @@
           <p v-if="user.bio !=null">{{ user.bio }}</p>
         <v-btn class="w-50 mb-5" @click="goEdit">Edit Profile</v-btn>
         <v-row>
-          <v-col v-for="output in user.plans" :key="output.planId" cols="4">
+          <v-col v-for="output in filterer" :key="output.planId" cols="4">
             <v-card class="mx-auto" max-width="300" max-height="250">
               <v-img
                 height="150px"
@@ -136,6 +136,17 @@ export default {
         this.fetchAndUpdateData(this.user.email);
       }
     });
+  },
+
+  computed: {
+    // filter the plans based on what has been typed in the search bar
+    filterer: function() {
+      if(this.search === '') {
+        return this.user.plans;
+      } else {
+        return this.user.plans.filter(plan => plan.Plan_Name.includes(this.search))
+      }
+    }
   },
 
   methods: {
