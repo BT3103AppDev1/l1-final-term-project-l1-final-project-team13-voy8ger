@@ -16,6 +16,7 @@ import {
   collection,
   addDoc,
   updateDoc,
+  setDoc,
   doc,
   arrayUnion,
 } from "firebase/firestore";
@@ -140,6 +141,10 @@ export default {
         console.log(userRef);
         await updateDoc(userRef, {
           plans_list: arrayUnion(docRef.id),
+        });
+
+        await setDoc(doc(db, "Likes", docRef.id), {
+          Liked_Users: [],
         });
 
         this.$toast.success("Plan saved successfully!");
