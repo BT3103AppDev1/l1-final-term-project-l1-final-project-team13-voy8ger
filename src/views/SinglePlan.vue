@@ -49,19 +49,27 @@ export default {
       userEmail: '',
       userName: '',
       likeCount: '',
-      planId: this.$route.query.id
+      planId: this.$route.query.id,
+
+      HasPicture: false
     };
-  }, mounted() {
+  }, 
+  
+  beforeMount() {
+    this.HasPicture = this.created();
+    this.UpdatePlan(this.planId);
+    this.likeCount = this.getNumLikes();
+  },
+  
+  mounted() {
       // get current user details
       const auth = getAuth();
+      
       onAuthStateChanged(auth, (user) => {
         if (user) {
           this.userEmail = user.email;
         }
       });
-
-      this.UpdatePlan(this.planId);
-      this.created();
 
   }, methods: {
       reserve() {
@@ -111,21 +119,26 @@ export default {
         // check if user has favourited this plan or not -> show that user has fav it
         const docRef2 = doc(db, "Users", String(this.userEmail));
         const docSnap2 = await getDoc(docRef2);
-        this.userName = docSnap2.data().Name;
         for(let i = 0; i < docSnap2.data().saved_list.length; i++) {
-          if(docSnap2.data().saved_list[i] == planId) {
+          if(docSnap2.data().saved_list[i] == this.planId) {
             this.AllowFavourite = false;
           }
         } 
 
         // check if user has liked this plan or not -> show that user has liked it
-        const docRef3 = doc(db, "Likes", planId);
+        const docRef3 = doc(db, "Likes", this.planId);
         const docSnap3 = await getDoc(docRef3);
         for(let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
-          if(docSnap3.data().Liked_Users[i] == planId) {
+          if(docSnap3.data().Liked_Users[i] == this.planId) {
             this.AllowLike = false;
           }
         } 
+
+        // get the plan's original user's name -> to be displayed
+        const docRef4 = doc(db, "Users", String(this.plan.creator_id));
+        const docSnap4 = await getDoc(docRef4);
+        this.userName = docSnap4.data().Name
+
         
       } else {
         console.log("No such document!");
@@ -159,11 +172,16 @@ export default {
       if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
         // remove thae users from liked it is already there
         await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // reduce num likes
+        this.likeCount--;
         // they can like it again
         this.AllowLike = true;
+        
       } else {
         // add the item to their saved list
         await this.addListItemLike(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // increase the number of likes shown
+        this.likeCount += 1
         // they cannot favourite it again
         this.AllowLike = false;
       }
@@ -176,7 +194,6 @@ export default {
           const data = docSnap.data();
           // Get the list from the document data
           const list = data[listFieldName];
-          console.log(list);
           // Remove the item from the list
           const updatedList = list.filter((item) => item !== itemToRemove);
           // Update the document with the modified list
@@ -225,12 +242,13 @@ export default {
           const imageUrl = await getDownloadURL(item);
           this.imageUrls.push(imageUrl);
         }
+         return true
         //console.log(this.imageUrls);
       } catch (error) {
         console.error('Error fetching images:', error);
       }
-      // trigger re render to display image on caroussel - doesnt work
-      this.imageKey++;
+      return false
+
     },
 
     async addListItemLike(docRef, docSnap, listFieldName, itemToAdd) {
@@ -255,15 +273,18 @@ export default {
       }
     },
 
-    // currently not working
+    // get number of likes for a plan
     async getNumLikes() {
-      const docRef = doc(db, "Likes", planId);
+      const docRef = doc(db, "Likes", this.planId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         this.likeCount = docSnap.data().Liked_Users.length;
-        console.log(likeCount);
-        return likeCount;
+        return this.likeCount;
       }
+    },
+
+    LikeCount() {
+      return this.likeCount;
     }
 
   }, computed: {
@@ -271,10 +292,7 @@ export default {
       return this.AllowFavourite ? 'mdi-heart-outline':'mdi-heart';
     },
     LikeColor() {
-      return this.AllowLike ? 'blue-lighten-3':'blue-darken-3';
-    }, 
-    LikeCount() {
-      return this.likeCount
+      return this.AllowLike ? 'black':'blue-darken-3';
     }
   }
 };
@@ -289,8 +307,8 @@ export default {
     </div>
   </div>
 
-  <body>
-    <div class="page-header min-vh-90" loading="lazy">
+  <body v-if="(imageUrls.length > 0) || (HasPicture == true)">
+    <div class="page-header min-vh-90">
     <v-card 
     class="mx-auto my-1"
     max-width="800"
@@ -299,8 +317,8 @@ export default {
     <div class="gallery-wrap">
       <div class = "gallery">
       <v-carousel>
-          <v-carousel-item v-for="imageUrl in imageUrls" >
-            <img :src="imageUrl" alt="img">
+          <v-carousel-item v-for="(imageUrl,i) in imageUrls" :key="i">
+            <img :src="imageUrl" alt="img" height="100%"/>
           </v-carousel-item>
       </v-carousel>
       </div>
@@ -367,7 +385,7 @@ export default {
       <v-btn :color="LikeColor" icon small variant="plain" size="small" @click="toggleLike(plan.planId)">
         <v-icon>mdi-thumb-up</v-icon>
       </v-btn>
-      <v-card-title>{{ LikeCount }} Likes</v-card-title>
+      <v-card-title>{{ LikeCount() }} Likes</v-card-title>
     </v-card-actions>
 
   </v-card>
