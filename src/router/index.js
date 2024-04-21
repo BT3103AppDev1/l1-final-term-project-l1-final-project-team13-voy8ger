@@ -10,6 +10,7 @@ import SinglePlan from "@/views/SinglePlan.vue";
 import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
 import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
 import EditProfile from "@/views/EditProfile.vue";
+import EditPlan from "@/views/EditPlan.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,21 +49,21 @@ const router = createRouter({
       path: "/",
       name: "Home",
       component: Home,
-    }, 
+    },
     {
-      path:"/favourites",
+      path: "/favourites",
       name: "Favourites",
-      component: Favourites
+      component: Favourites,
     },
     {
       path: "/prfle/createplan",
       name: "CreatePlan",
       component: CreatePlan,
-    }, 
+    },
     {
       path: "/SinglePlan",
       name: "SinglePlan",
-      component: SinglePlan
+      component: SinglePlan,
     },
     /*
     {
@@ -71,21 +72,25 @@ const router = createRouter({
       component: () => import('@/views/LandingPages/AboutUs/AboutView.vue')
     },
     */
-    
+
     {
       path: "/about-us",
       name: "AboutUs",
-      component: AboutView // Use the imported component directly
+      component: AboutView,
     },
-    
 
     {
-      path: '/contact-us', // Define the path for the contact us page
-      name: 'ContactUs',
+      path: "/contact-us",
+      name: "ContactUs",
       component: ContactView,
+    },
+    {
+      path: "/update-plan/:planId",
+      name: "UpdatePlan",
+      component: EditPlan,
+      props: true,
     },
   ],
 });
 
 export default router;
-

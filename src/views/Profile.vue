@@ -13,10 +13,7 @@
       >
         <div class="d-flex flex-column">
           <v-avatar size="100" class="mb-2">
-            <img
-              :src="user.profilePic"
-              alt="user profile picture"
-            />
+            <img :src="user.profilePic" alt="user profile picture" />
           </v-avatar>
           <h4>{{ user.name }}</h4>
         </div>
@@ -39,19 +36,22 @@
         </div>
       </div>
       <div class="profile">
-          <p v-if="user.bio !=null">{{ user.bio }}</p>
+        <p v-if="user.bio != null">{{ user.bio }}</p>
         <v-btn class="w-50 mb-5" @click="goEdit">Edit Profile</v-btn>
         <v-row>
           <v-col v-for="output in filterer" :key="output.planId" cols="4">
-            <v-card class="mx-auto" max-width="300" max-height="250">
+            <v-card
+              class="mx-auto card"
+              max-width="300"
+              max-height="250"
+              @click="goToUpdatePage(output.planId)"
+            >
               <v-img
                 height="150px"
                 src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
                 cover
               ></v-img>
-
               <v-card-title>{{ output.Plan_Name }}</v-card-title>
-
               <v-row align="center">
                 <v-col cols="6">
                   <v-card-text>{{ output.num_likes }} likes</v-card-text>
@@ -59,7 +59,6 @@
                     output.plan_description
                   }}</v-card-subtitle>
                 </v-col>
-
                 <v-col cols="6">
                   <v-card-actions>
                     <v-spacer></v-spacer>
@@ -68,7 +67,7 @@
                       icon
                       size="small"
                       variant="plain"
-                      @click="toggleHeart(output.planId)"
+                      @click.stop="toggleHeart(output.planId)"
                     >
                       <v-icon>{{
                         user.saved.includes(output.planId)
@@ -102,7 +101,6 @@ import {
   getDocs,
   getDoc,
   doc,
-  deleteDoc,
   updateDoc,
 } from "firebase/firestore";
 import NavbarDefault from "../components/NavbarDefault.vue";
@@ -140,16 +138,21 @@ export default {
 
   computed: {
     // filter the plans based on what has been typed in the search bar
-    filterer: function() {
-      if(this.search === '') {
+    filterer: function () {
+      if (this.search === "") {
         return this.user.plans;
       } else {
-        return this.user.plans.filter(plan => plan.Plan_Name.includes(this.search))
+        return this.user.plans.filter((plan) =>
+          plan.Plan_Name.includes(this.search)
+        );
       }
-    }
+    },
   },
 
   methods: {
+    goToUpdatePage(planId) {
+      this.$router.push({ name: "UpdatePlan", params: { planId } });
+    },
     async toggleHeart(planId) {
       // get document of that user
       const docRef = doc(db, "Users", String(this.user.email));
@@ -233,5 +236,10 @@ export default {
 
 .posts {
   /* Add your styles here */
+}
+
+.card:hover {
+  transform: scale(1.05); /* Increase the size slightly */
+  transition: transform 0.2s ease; /* Add a smooth transition */
 }
 </style>
