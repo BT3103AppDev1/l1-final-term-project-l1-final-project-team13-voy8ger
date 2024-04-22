@@ -154,13 +154,14 @@ export default {
 
         <v-row>
         <v-col v-for="output in filterer" cols="4"> 
-            <v-card class="mx-auto card" max-width="330" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
+            <v-card class="mx-auto card" max-width="330" max-height="250" >
 
             <v-img
             class="align-end text-white"
             height="150"
             src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
             cover
+            v-on:click = "goToSinglePlan(output.planId)"
             >
 
             <v-card-title >{{ output.Plan_Name }}</v-card-title>

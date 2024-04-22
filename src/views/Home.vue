@@ -41,6 +41,7 @@ export default {
       tempArray: [],
       allPlans: [],
       favorites: [],
+      liked: [],
     };
   },
 
@@ -110,6 +111,28 @@ export default {
         
       }
     },
+    async toggleLike(planName) {
+      const docRef = doc(db, "Plans", planName);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const userList = data.Liked_Users || [];
+        console.log(userList);
+        if (!userList.includes(this.userEmail)) {
+          await this.addListItem(docRef, docSnap, "Liked_Users", this.userEmail);
+          console.log(`User ${this.userEmail} added to liked list.`);
+        } else {
+          await this.deleteListItem(docRef, docSnap, "Liked_Users", this.userEmail);
+          console.log(`User ${this.userEmail} removed from liked list.`);
+        }
+        this.liked = [];
+      // refresh the rest
+        this.fetchAndUpdateData(String(this.userEmail));
+        this.fetchPlans();
+        
+      }
+    },
     async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
       try {
         if (docSnap.exists()) {
@@ -145,6 +168,11 @@ export default {
     heartColor(planId) {
       console.log('heart color is determined');
       return this.favorites.includes(planId) ? 'mdi-heart':'mdi-heart-outline';
+
+    },
+    likeColor(planId) {
+      console.log('like color is determined');
+      return this.liked.includes(planId) ? 'mdi-thumb-up':'mdi-thumb-up-outline';
 
     },
     goToSinglePlan(planId) {
@@ -238,22 +266,28 @@ export default {
     <v-row align="center" justify="center">
       <v-col v-for="output in temp" cols="4">
         <!-- :key="card.id" -->
-        <v-card class="mx-auto" max-width="300" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
+        <v-card class="mx-auto card" max-width="300" max-height="250" >
           <v-img
+            class="align-end text-white"
             height="150px"
             src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
             cover
-          ></v-img>
-
+            v-on:click = "goToSinglePlan(output.planId)"
+          >
           <v-card-title>{{ output.Plan_Name }}</v-card-title>
+        </v-img>
+
+          
 
           <v-row align="center">
-            <v-col cols="6">
-              <v-card-text>{{ output.num_likes }} likes</v-card-text>
-              <v-card-subtitle>{{ output.plan_description }}</v-card-subtitle>
+            <v-col cols="8">
+              <v-card-text>
+                    <div>{{ output.num_likes }} likes</div>
+                    <div class="truncate">{{ output.plan_description }}</div>
+              </v-card-text>
             </v-col>
-
-            <v-col cols="6">
+            
+            <v-col cols="1">
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
@@ -263,9 +297,31 @@ export default {
                   variant="plain"
                   @click="toggleHeart(output.planId)"
                 >
-                  <v-icon>{{
+                  <v-icon>
+                    {{
                     heartColor(output.planId)
-                  }}</v-icon>
+                  }}
+                  
+                  </v-icon>
+                </v-btn>
+                
+              </v-card-actions>
+            </v-col>
+            <v-col cols="3">
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="error"
+                  icon
+                  size="small"
+                  variant="plain"
+                  @click="toggleLike(output.planId)"
+                >
+                  <v-icon>
+                    {{
+                    likeColor(output.planId)
+                  }}
+                  </v-icon>
                 </v-btn>
                 
               </v-card-actions>
@@ -277,3 +333,14 @@ export default {
   </div>
   <DefaultFooter />
 </template>
+<style scoped>
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.card:hover {
+      transform: scale(1.05); /* Increase the size slightly */
+      transition: transform 0.2s ease; /* Add a smooth transition */
+}
+</style>
