@@ -21,6 +21,8 @@ import "@mdi/font/css/materialdesignicons.css";
 import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
 import Header from "../components/Header.vue";
+
+
 </script>
 
 <script>
@@ -31,7 +33,8 @@ export default {
       user: '',
       userEmail: '',
       temp: [],
-      search: ''
+      search: '',
+      AllowLike: true
     };
   },
 
@@ -56,6 +59,10 @@ export default {
       } else {
         return this.temp.filter(plan => plan.Plan_Name.includes(this.search))
       }
+    },
+
+    LikeColor() {
+      return this.AllowLike ? 'black':'blue-darken-3';
     }
   },
 
@@ -71,6 +78,25 @@ export default {
       this.temp = [];
       // refresh the rest
       this.fetchAndUpdateData(String(this.userEmail));
+    },
+
+    async toggleLike(plan_Name) {
+      // get document of that liked users from collection Likes
+      const docRef = doc(db, "Likes", plan_Name);
+      const docSnap = await getDoc(docRef);
+
+      if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
+        // remove thae users from liked it is already there
+        await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // they can like it again
+        this.AllowLike = true;
+      } else {
+        // add the item to their saved list
+        await this.addListItemLike(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // they cannot favourite it again
+        this.AllowLike = false;
+        console.log("done")
+      }
     },
 
     async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
@@ -93,6 +119,28 @@ export default {
         }
       } catch (error) {
         console.error("Error removing item from list:", error);
+      }
+    },
+
+    async addListItemLike(docRef, docSnap, listFieldName, itemToAdd) {
+      try {
+        if (docSnap.exists()) {
+          // Get the data from the document
+          const existingList = docSnap.data()["Liked_Users"];
+          
+          // Add the new item to the existing list
+          existingList.push(itemToAdd);
+
+          // Update the document with the modified list
+          await updateDoc(docRef, {
+            "Liked_Users": existingList,
+          });
+          console.log("Item added to the list:", itemToRemove);
+        } else {
+          console.log("Document does not exist!");
+        }
+      } catch (error) {
+        console.error("Error adding item from list:", error);
       }
     },
 
@@ -178,8 +226,12 @@ export default {
                 <v-col cols="6">
                     <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(output.planId)">
+                    <v-btn color="error" icon size="small" variant="plain" @click.stop="toggleHeart(output.planId)">
                         <v-icon>{{ heart ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+                    </v-btn>
+
+                    <v-btn :color="LikeColor" icon small variant="plain" size="small" @click.stop="toggleLike(output.planId)">
+                      <v-icon>mdi-thumb-up</v-icon>
                     </v-btn>
                     </v-card-actions>
                 </v-col>
