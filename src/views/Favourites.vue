@@ -22,7 +22,6 @@ import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
 import Header from "../components/Header.vue";
 
-
 </script>
 
 <script>
@@ -34,15 +33,14 @@ export default {
       userEmail: '',
       temp: [],
       search: '',
-      AllowLike: true
     };
   },
 
   async mounted() {
+
     // get user if logged IN & then get the required favourite plan data
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if (user) {
         this.user = user;
         this.userEmail = user.email;
@@ -62,8 +60,9 @@ export default {
     },
 
     LikeColor() {
-      return this.AllowLike ? 'black':'blue-darken-3';
-    }
+      return this.AllowLike ? 'mdi-thumb-up-outline':'mdi-thumb-up';
+    },
+    
   },
 
   methods: {
@@ -88,14 +87,13 @@ export default {
       if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
         // remove thae users from liked it is already there
         await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
-        // they can like it again
-        this.AllowLike = true;
+        // rather than finding the exact plan in temp then updating the like -> simply re get everything
+        this.fetchAndUpdateData(this.userEmail);
       } else {
         // add the item to their saved list
         await this.addListItemLike(docRef, docSnap, "Liked_Users", String(this.userEmail));
-        // they cannot favourite it again
-        this.AllowLike = false;
-        console.log("done")
+        // rather than finding the exact plan in temp then updating the like -> simply re get everything
+        this.fetchAndUpdateData(this.userEmail);
       }
     },
 
@@ -145,15 +143,40 @@ export default {
     },
 
     async fetchAndUpdateData(userEmail) {
+      // clear the array before modification
+      this.temp = []
+
       // get saved plan list of the user
       const docRef = doc(db, "Users", String(this.userEmail));
       const docSnap = await getDoc(docRef);
-      console.log(docSnap.data());
-      console.log(docSnap.data().saved_list);
 
       // get all the plans out & put it into the list temp
       const val = docSnap.data().saved_list.map(async (element) => {
-        this.temp.push((await getDoc(doc(db, "Plans", element))).data());
+        let tempLike = true;
+        let likeCount = '';
+
+        // get data if the user has liked this or not
+        const docRef3 = doc(db, "Likes", element);
+        const docSnap3 = await getDoc(docRef3);
+        for(let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
+        
+          // user has liked this so dont let him like again
+          if(docSnap3.data().Liked_Users[i] == this.userEmail) {
+            tempLike = false;
+          }
+
+          // get the number of likes for this plan
+          likeCount = await this.getNumLikes(element);
+        } 
+
+        // for those plans find out number of likes for that plan as well
+
+        // along with plan details pass in if user has liked this or not
+        let deets = (await getDoc(doc(db, "Plans", element))).data();
+        deets.AllowLike = tempLike
+        deets.likeCount = likeCount;
+
+        this.temp.push(deets);
       });
 
       console.log(this.temp);
@@ -166,7 +189,18 @@ export default {
       this.$router.push({ name: "SinglePlan", query: {
         id: planId
       } });
-    }
+    },
+
+    // get number of likes for a specific planId
+    async getNumLikes(planId) {
+      const docRef = doc(db, "Likes", planId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        this.likeCount = docSnap.data().Liked_Users.length;
+        return this.likeCount;
+      }
+    },
+
   },
 };
 </script>
@@ -217,7 +251,7 @@ export default {
             <v-row align="center">
                 <v-col cols="6">
                     <v-card-text>
-                    <div>{{ output.num_likes }} likes</div>
+                    <div>{{ output.likeCount }} likes</div>
                     <div class="truncate">{{ output.plan_description }}</div>
                     </v-card-text>
                 </v-col>
@@ -229,8 +263,8 @@ export default {
                         <v-icon>{{ heart ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
                     </v-btn>
 
-                    <v-btn :color="LikeColor" icon small variant="plain" size="small" @click.stop="toggleLike(output.planId)">
-                      <v-icon>mdi-thumb-up</v-icon>
+                    <v-btn color="#0077B6" icon small variant="plain" size="small" @click.stop="toggleLike(output.planId)">
+                      <v-icon>{{output.AllowLike ? 'mdi-thumb-up-outline':'mdi-thumb-up'}}</v-icon>
                     </v-btn>
                     </v-card-actions>
                 </v-col>
