@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 // example components
 import Header from "@/components/Header.vue";
@@ -55,12 +55,14 @@ onMounted(() => {
               <div class="card-body">
                 <form role="form" class="text-start">
                   <MaterialInput
+                    ref = "emailInput"
                     id="email"
                     class="input-group-outline my-3"
                     :label="{ text: 'Email', class: 'form-label' }"
                     type="email"
                   />
                   <MaterialInput
+                    ref = "passwordInput"
                     id="password"
                     class="input-group-outline mb-3"
                     :label="{ text: 'Password', class: 'form-label' }"
@@ -76,6 +78,7 @@ onMounted(() => {
 
                   <div class="text-center">
                     <MaterialButton
+                      id = "matButton"
                       class="my-4 mb-2"
                       variant="gradient"
                       color="success"

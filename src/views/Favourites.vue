@@ -21,6 +21,8 @@ import "@mdi/font/css/materialdesignicons.css";
 import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
 import Header from "../components/Header.vue";
+
+
 </script>
 
 <script>
