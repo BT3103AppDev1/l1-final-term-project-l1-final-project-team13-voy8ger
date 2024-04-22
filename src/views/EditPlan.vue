@@ -7,16 +7,22 @@ import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { db, storage } from "../firebase.js";
 import { ref as vueRef, reactive, onMounted } from "vue";
-import { useRoute } from "vue-router";
-// import Toaster from "@meforma/vue-toaster";
+import { useRoute, useRouter } from "vue-router";
+import { createToaster } from "@meforma/vue-toaster";
 import {
   ref as storageRef,
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+const toaster = createToaster({
+  position: "top",
+  dismissable: "true",
+  maxToasts: 1,
+});
 
 const route = useRoute();
+const router = useRouter();
 const planId = vueRef(route.params.planId);
 const fileInputRef = vueRef(null);
 const planData = reactive({
@@ -28,7 +34,7 @@ const planData = reactive({
   Date: new Date(),
   plan_description: "",
   Pictures: [],
-  status: false,
+  status: null,
   creator_rating: null,
   creator_review: "",
   creator_spending: 0,
@@ -51,7 +57,7 @@ async function fetchPlanDetails() {
     if (planDocSnap.exists()) {
       Object.assign(planData, planDocSnap.data());
       planData.Date = new Date(planData.Date.seconds * 1000);
-      console.log(planData);
+      // console.log(planData);
     } else {
       console.error("No such plan!");
     }
@@ -66,7 +72,8 @@ async function updatePlan() {
   try {
     await updateDoc(planDocRef, planData);
     console.log("Plan updated successfully!");
-    // Toaster.success("Plan Updated successfully!");
+    toaster.success("Plan Updated successfully!");
+    router.push({ name: "Profile" });
   } catch (error) {
     console.error("Error updating plan:", error);
   }
@@ -76,28 +83,28 @@ function togglePlanCompleted() {
   planData.status = !planData.status;
 }
 
-// async function uploadPhoto(event) {
-//   const file = event.target.files[0];
-//   if (!file) return;
-//   const fileRef = storageRef(storage, `Plans/${file.name}`);
-//   try {
-//     const uploadResult = await uploadBytes(fileRef, file);
-//     const downloadURL = await getDownloadURL(uploadResult.ref);
-//     planData.Pictures.push(downloadURL);
-//   } catch (error) {
-//     console.error("Error uploading file:", error);
-//   }
-// }
+async function uploadPhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const fileRef = storageRef(storage, `Plans/${file.name}`);
+  try {
+    const uploadResult = await uploadBytes(fileRef, file);
+    const downloadURL = await getDownloadURL(uploadResult.ref);
+    planData.Pictures.push(downloadURL);
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
+}
 
-// function triggerFileUpload() {
-//   if (fileInputRef.value) {
-//     fileInputRef.value.click();
-//   }
-// }
+function triggerFileUpload() {
+  if (fileInputRef.value) {
+    fileInputRef.value.click();
+  }
+}
 
-// function removePicture(index) {
-//   planData.Pictures.splice(index, 1);
-// }
+function removePicture(index) {
+  planData.Pictures.splice(index, 1);
+}
 </script>
 
 <script>
@@ -197,7 +204,7 @@ export default {
                   type="file"
                   @change="uploadPhoto"
                   hidden
-                  ref="fileInput"
+                  ref="fileInputRef"
                 />
                 <MaterialButton
                   @click="triggerFileUpload"
@@ -238,6 +245,7 @@ export default {
                   @change="togglePlanCompleted"
                   class="mb-4 d-flex align-items-center"
                   id="flexSwitchCheckDefault"
+                  disabled
                   >Plan Completed?</MaterialSwitch
                 >
               </v-col>

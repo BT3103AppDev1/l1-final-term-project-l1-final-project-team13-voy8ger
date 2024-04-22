@@ -11,6 +11,7 @@ import AboutView from "../views/LandingPages/AboutUs/AboutView.vue";
 import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
 import EditProfile from "@/views/EditProfile.vue";
 import EditPlan from "@/views/EditPlan.vue";
+import Analytics from "@/views/Analytics.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,13 +66,12 @@ const router = createRouter({
       name: "SinglePlan",
       component: SinglePlan,
     },
-    /*
+
     {
-      path: "/about-us",
-      name: "AboutUs",
-      component: () => import('@/views/LandingPages/AboutUs/AboutView.vue')
+      path: "/analytics",
+      name: "Analytics",
+      component: Analytics,
     },
-    */
 
     {
       path: "/about-us",

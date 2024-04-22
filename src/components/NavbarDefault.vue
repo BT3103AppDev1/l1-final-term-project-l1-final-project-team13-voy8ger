@@ -3,9 +3,7 @@ import { RouterLink, useRouter } from "vue-router";
 import { ref, watch } from "vue";
 import { useWindowsWidth } from "../assets/js/useWindowsWidth";
 
-import { auth } from '@/firebase'; // Import Firebase auth module
-
-
+import { auth } from "@/firebase"; // Import Firebase auth module
 
 // images
 import ArrDark from "@/assets/img/down-arrow-dark.svg";
@@ -17,23 +15,22 @@ const router = useRouter();
 
 // Function to handle sign in
 async function handleSignIn() {
-  router.push('/login'); // Redirect to login page
+  router.push("/login"); // Redirect to login page
 }
 
 // Function to handle sign out
 async function handleSignOut() {
   try {
     await auth.signOut(); // Call Firebase's signOut method
-    router.push('/'); // Redirect to home page after signing out
+    router.push("/"); // Redirect to home page after signing out
   } catch (error) {
-    console.error('Error signing out:', error.message);
+    console.error("Error signing out:", error.message);
   }
 }
 
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged((user) => {
   isAuthenticated.value = !!user; // Update isAuthenticated based on user authentication status
 });
-
 
 //dont change
 const props = defineProps({
@@ -115,8 +112,6 @@ watch(
     }
   }
 );
-
-
 </script>
 
 <template>
@@ -138,8 +133,7 @@ watch(
           : 'container-fluid px-0'
       "
     >
-
-    <!--Brand logo-->
+      <!--Brand logo-->
       <RouterLink
         class="navbar-brand d-none d-md-block"
         :class="[
@@ -155,16 +149,21 @@ watch(
         V O Y 8 G E R
       </RouterLink>
 
-      <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
-
+      <div
+        class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0"
+        id="navigation"
+      >
         <ul class="navbar-nav navbar-nav-hover ms-auto">
-
           <li v-if="!isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'AboutUs' }">About Us</RouterLink>
+            <RouterLink class="nav-link" :to="{ name: 'AboutUs' }"
+              >About Us</RouterLink
+            >
           </li>
 
           <li v-if="!isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'ContactUs' }">Contact Us</RouterLink>
+            <RouterLink class="nav-link" :to="{ name: 'ContactUs' }"
+              >Contact Us</RouterLink
+            >
           </li>
 
           <li class="nav-item dropdown dropdown-hover mx-2">
@@ -180,35 +179,51 @@ watch(
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'CreatePlan' }">Create</RouterLink>
+            <RouterLink class="nav-link" :to="{ name: 'CreatePlan' }"
+              >Create</RouterLink
+            >
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'Favourites' }">Favourites</RouterLink>
+            <RouterLink class="nav-link" :to="{ name: 'Favourites' }"
+              >Favourites</RouterLink
+            >
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'Profile' }">Profile</RouterLink>
+            <RouterLink class="nav-link" :to="{ name: 'Analytics' }"
+              >Analytics</RouterLink
+            >
+          </li>
+
+          <li v-if="isAuthenticated" class="nav-item">
+            <RouterLink class="nav-link" :to="{ name: 'Profile' }"
+              >Profile</RouterLink
+            >
           </li>
         </ul>
-
-        
 
         <ul class="navbar-nav d-lg-block d-none">
           <li class="nav-item">
             <!-- Conditional rendering based on authentication status -->
-            <button v-if="!isAuthenticated" @click="handleSignIn" class="btn btn-sm mb-0" :class="action.color">
+            <button
+              v-if="!isAuthenticated"
+              @click="handleSignIn"
+              class="btn btn-sm mb-0"
+              :class="action.color"
+            >
               Sign In
             </button>
-            <button v-else @click="handleSignOut" class="btn btn-sm mb-0" :class="action.color">
+            <button
+              v-else
+              @click="handleSignOut"
+              class="btn btn-sm mb-0"
+              :class="action.color"
+            >
               Sign Out
             </button>
           </li>
         </ul>
-    
-      
-      
-
       </div>
     </div>
   </nav>
