@@ -97,23 +97,16 @@ export default {
         'creator_spending': docSnap.data().creator_spending,
         'planId': docSnap.data().planId,
         'plan_description': docSnap.data().plan_description,
-        'status': docSnap.data().status};
+        'status': docSnap.data().status
+      };
 
         // get ALL location details of that plan
-        const collectionRef = collection(db, "Locations"); 
-        const q = query(collectionRef, where('__name__', 'in', this.plan.location_list));
-        const snapshot = await getDocs(q);
-        this.locationSnapshot = {}
+        this.locationSnapshot = []
+        console.log(docSnap.data().location_list[1]);
 
         // Iterate over the snapshot to access each document
-        snapshot.forEach(doc => {
-          if (doc.exists()) {
-            this.locationSnapshot[doc.id] = {'address':doc.data().address, 'category':doc.data().category, 
-            'location_name':doc.data().location_name};
-
-          } else {
-            console.log("No such document with ID:", doc.id);
-          }
+        this.plan.location_list.forEach(doc => {
+            this.locationSnapshot.push(doc.route);
         });
 
         // check if user has favourited this plan or not -> show that user has fav it
@@ -248,7 +241,6 @@ export default {
         console.error('Error fetching images:', error);
       }
       return false
-
     },
 
     async addListItemLike(docRef, docSnap, listFieldName, itemToAdd) {
@@ -285,7 +277,14 @@ export default {
 
     LikeCount() {
       return this.likeCount;
-    }
+    },
+
+    // function to go a single Location view via routing
+    goToSingleLocation() {
+      this.$router.push({ name: "LocationView", query: {
+        id: planId
+      } });
+    },
 
   }, computed: {
     HeartColor() {
@@ -367,8 +366,8 @@ export default {
 
       <!-- Location List -->
       <div class="my-4">
-        <v-chip v-for="locations in locationSnapshot" class="mr-2 mb-2">
-          {{locations.location_name}}
+        <v-chip v-for="locations in locationSnapshot" class="mr-2 mb-2" @click="goToSingleLocation" >
+          {{locations }}
         </v-chip>
       </div>
 
