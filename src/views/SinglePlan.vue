@@ -129,7 +129,7 @@ export default {
         const docRef3 = doc(db, "Likes", this.planId);
         const docSnap3 = await getDoc(docRef3);
         for(let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
-          if(docSnap3.data().Liked_Users[i] == this.planId) {
+          if(docSnap3.data().Liked_Users[i] == this.userEmail) {
             this.AllowLike = false;
           }
         } 
@@ -292,7 +292,7 @@ export default {
       return this.AllowFavourite ? 'mdi-heart-outline':'mdi-heart';
     },
     LikeColor() {
-      return this.AllowLike ? 'black':'blue-darken-3';
+      return this.AllowLike ? 'mdi-thumb-up-outline':'mdi-thumb-up';
     }
   }
 };
@@ -382,8 +382,8 @@ export default {
       <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(plan.planId)">
         <v-icon>{{ HeartColor }}</v-icon>
       </v-btn>
-      <v-btn :color="LikeColor" icon small variant="plain" size="small" @click="toggleLike(plan.planId)">
-        <v-icon>mdi-thumb-up</v-icon>
+      <v-btn color="#0077B6" icon small variant="plain" size="small" @click="toggleLike(plan.planId)">
+        <v-icon>{{ LikeColor }}</v-icon>
       </v-btn>
       <v-card-title>{{ LikeCount() }} Likes</v-card-title>
     </v-card-actions>
