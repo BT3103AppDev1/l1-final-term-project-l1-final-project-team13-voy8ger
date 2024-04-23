@@ -2,25 +2,14 @@
 // firebase stuff to get user data
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebase.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { getDoc, doc, updateDoc} from "firebase/firestore";
 
 // misc imports
-import { onMounted, onUnmounted } from "vue";
-import { RouterLink } from "vue-router";
 import "@mdi/font/css/materialdesignicons.css";
 
 //example components
 import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
-import Header from "../components/Header.vue";
 
 </script>
 
@@ -58,10 +47,6 @@ export default {
         return this.temp.filter(plan => plan.Plan_Name.includes(this.search))
       }
     },
-
-    LikeColor() {
-      return this.AllowLike ? 'mdi-thumb-up-outline':'mdi-thumb-up';
-    },
     
   },
 
@@ -87,13 +72,32 @@ export default {
       if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
         // remove thae users from liked it is already there
         await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
-        // rather than finding the exact plan in temp then updating the like -> simply re get everything
+
+        // rather than finding the exact plan in temp then updating the like (react cannot update it :()
+        // -> simply re get everything despite possible lag
         this.fetchAndUpdateData(this.userEmail);
+
+        // loop through temp list, find this plan then replace it's value for allowLike
+        // for(let i = 0; i < this.temp.length; i++) {
+        //   if(this.temp[i].Plan_Name == plan_Name) {
+        //     this.temp[i].AllowLike = true
+        //   }
+        // }
+
       } else {
         // add the item to their saved list
         await this.addListItemLike(docRef, docSnap, "Liked_Users", String(this.userEmail));
-        // rather than finding the exact plan in temp then updating the like -> simply re get everything
+
+        // rather than finding the exact plan in temp then updating the like (react cannot update it :()
+        // -> simply re get everything despite possible lag
         this.fetchAndUpdateData(this.userEmail);
+
+        // loop through temp list, find this plan then replace it's value for allowLike
+        // for(let i = 0; i < this.temp.length; i++) {
+        //   if(this.temp[i].Plan_Name == plan_Name) {
+        //     this.temp[i].AllowLike = false
+        //   }
+        // }
       }
     },
 
@@ -104,14 +108,13 @@ export default {
           const data = docSnap.data();
           // Get the list from the document data
           const list = data[listFieldName];
-          console.log(list);
           // Remove the item from the list
           const updatedList = list.filter((item) => item !== itemToRemove);
           // Update the document with the modified list
           await updateDoc(docRef, {
             [listFieldName]: updatedList,
           });
-          console.log("Item removed from the list:", itemToRemove);
+          
         } else {
           console.log("Document does not exist!");
         }
@@ -133,7 +136,7 @@ export default {
           await updateDoc(docRef, {
             "Liked_Users": existingList,
           });
-          console.log("Item added to the list:", itemToRemove);
+          
         } else {
           console.log("Document does not exist!");
         }
@@ -152,6 +155,8 @@ export default {
 
       // get all the plans out & put it into the list temp
       const val = docSnap.data().saved_list.map(async (element) => {
+
+        // get the count of likes & a temp variable for if user can like a plan or not
         let tempLike = true;
         let likeCount = '';
 
@@ -169,8 +174,6 @@ export default {
           likeCount = await this.getNumLikes(element);
         } 
 
-        // for those plans find out number of likes for that plan as well
-
         // along with plan details pass in if user has liked this or not
         let deets = (await getDoc(doc(db, "Plans", element))).data();
         deets.AllowLike = tempLike
@@ -179,11 +182,10 @@ export default {
         this.temp.push(deets);
       });
 
-      console.log(this.temp);
     },
 
+    // function to go a singlePlan via routing
     goToSinglePlan(planId) {
-      console.log(planId);
       // go to the singlePlan view and send the planId
       // so that details related to this plan can be retrived there
       this.$router.push({ name: "SinglePlan", query: {
