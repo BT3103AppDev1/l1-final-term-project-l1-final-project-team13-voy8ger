@@ -123,9 +123,9 @@ export default {
           // along with plan details pass in if user has liked this or not
           
         } else {
-          await setDoc(doc(db, "Likes", element), {
-            Liked_Users: []
-          })
+          // await setDoc(doc(db, "Likes", element), {
+          //   Liked_Users: []
+          // })
 
         }
         let deets = (await getDoc(doc(db, "Plans", element))).data();
