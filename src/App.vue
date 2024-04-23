@@ -13,6 +13,7 @@
   import EditProfile from './views/EditProfile.vue';
   import Favourites from "./views/Favourites.vue";
   import SinglePlan from "./views/SinglePlan.vue";
+  import LocationView from './views/LocationView.vue';
 
   export default {
     name: 'App',
@@ -23,7 +24,8 @@
       Profile,
       EditProfile,
       Favourites,
-      SinglePlan
+      SinglePlan,
+      LocationView
     }
   }
 </script>
