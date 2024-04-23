@@ -14,7 +14,13 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  arrayRemove,
+} from "firebase/firestore";
 const toaster = createToaster({
   position: "top",
   dismissable: "true",
@@ -104,6 +110,31 @@ function triggerFileUpload() {
 
 function removePicture(index) {
   planData.Pictures.splice(index, 1);
+}
+
+async function deletePlan() {
+  if (
+    confirm(
+      "Are you sure you want to delete this plan? This action cannot be undone."
+    )
+  ) {
+    try {
+      const planDocRef = doc(db, "Plans", planId.value);
+      await deleteDoc(planDocRef);
+      const likesDocRef = doc(db, "Likes", planId.value);
+      await deleteDoc(likesDocRef);
+      const userDocRef = doc(db, "Users", planData.creator_id);
+      await updateDoc(userDocRef, {
+        plans_list: arrayRemove(planId.value),
+      });
+
+      toaster.success("Plan deleted successfully!");
+      router.push({ name: "Profile" });
+    } catch (error) {
+      console.error("Error deleting plan:", error);
+      toaster.error("Failed to delete plan.");
+    }
+  }
 }
 </script>
 
@@ -276,6 +307,15 @@ export default {
                 fullWidth
                 >Update Plan</MaterialButton
               >
+              <MaterialButton
+                @click="deletePlan"
+                type="button"
+                variant="gradient"
+                color="red"
+                fullWidth
+              >
+                Delete Plan
+              </MaterialButton>
             </v-row>
           </div>
         </div>
