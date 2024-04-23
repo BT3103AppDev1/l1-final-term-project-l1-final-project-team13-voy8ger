@@ -158,7 +158,7 @@ export default {
 
         // get the count of likes & a temp variable for if user can like a plan or not
         let tempLike = true;
-        let likeCount = '';
+        let likeCount = 0;
 
         // get data if the user has liked this or not
         const docRef3 = doc(db, "Likes", element);

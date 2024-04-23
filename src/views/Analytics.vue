@@ -10,6 +10,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+import BarChart from '../components/Chart.vue'
 </script>
 <script>
 export default {
@@ -23,6 +24,7 @@ export default {
       temp: [],
       favorites: [],
       length: 3,
+      plansCreated: 0,
     };
   },
   mounted() {
@@ -36,6 +38,7 @@ export default {
       }
     });
   },
+  components: { BarChart },
   methods: {
     async fetchAndUpdateData(userEmail) {
       // get saved plan list of the user
@@ -49,6 +52,7 @@ export default {
         // this.favorites.push((await getDoc(doc(db, "Plans", element))).data());
         this.favorites.push(element);
       });
+      this.plansCreated = docSnap.data().plans_list.length
 
       console.log(this.favorites);
     },
@@ -156,8 +160,23 @@ export default {
           :style="{ display: 'inline-block ' }"
         >
           Analytics
+          
         </h1>
+
+        <BarChart/>
       </v-row>
+      <v-row class="mt-15" justify="center">
+        <h1
+          class="text-black pt-3 mt-n5 me-2 text-center"
+          :style="{ display: 'inline-block ' }"
+        >
+        Plans Created: {{plansCreated}}
+          <br>
+          
+        </h1>
+
+      </v-row>
+      
     </v-container>
   </div>
 

@@ -9,6 +9,7 @@ import {
   getDoc,
   doc,
   updateDoc,
+setDoc,
 } from "firebase/firestore";
 </script>
 <script>
@@ -24,6 +25,7 @@ export default {
       favorites: [],
       length: 3,
       liked: [],
+      result:[],
     };
   },
   mounted() {
@@ -34,6 +36,7 @@ export default {
         this.userEmail = user.email;
         this.fetchPlans();
         this.fetchAndUpdateData(this.userEmail);
+        this.fetchAndUpdateLikes();
       }
     });
   },
@@ -48,7 +51,6 @@ export default {
 
       // get all the plans out & put it into the list temp
       const val = docSnap.data().saved_list.map(async (element) => {
-        // this.favorites.push((await getDoc(doc(db, "Plans", element))).data());
         this.favorites.push(element);
       });
 
@@ -61,18 +63,67 @@ export default {
       this.tempArray = this.allPlans.slice();
       this.temp = this.tempArray.slice(0, this.length);
     },
+    async fetchAndUpdateLikes() {
+      const querySnapshot2 = await getDocs(collection(db, "Plans"));
+      this.liked = querySnapshot2.docs.map((doc) => doc.data().planId);
+
+      this.result = []
+      const val = this.liked.map(async (element) => {
+
+        let tempLike = false;
+        let likeCount = 0;
+
+        // get data if the user has liked this or not
+        const docRef3 = doc(db, "Likes", String(element));
+        const docSnap3 = await getDoc(docRef3);
+        if (docSnap3.exists()) {
+          const data3 = docSnap3.data();
+          const Liked_Users = data3.Liked_Users || [];
+          for(let i = 0; i < Liked_Users.length; i++) {
+          
+            // user has liked this so dont let him like again
+            if(Liked_Users[i] == this.userEmail) {
+              tempLike = true;
+            }
+
+            // get the number of likes for this plan
+            likeCount = await this.getNumLikes(element);
+          } 
+
+          // for those plans find out number of likes for that plan as well
+
+          // along with plan details pass in if user has liked this or not
+          
+        } else {
+          await setDoc(doc(db, "Likes", element), {
+            Liked_Users: []
+          })
+
+        }
+        let deets = (await getDoc(doc(db, "Plans", element))).data();
+          deets.liked = tempLike
+          deets.likeCount = likeCount;
+          console.log(deets)
+          this.result.push(deets)
+
+      });
+
+      console.log(this.result);
+    },
     async toggleHeart(planName) {
       const docRef = doc(db, "Users", this.userEmail);
       const docSnap = await getDoc(docRef);
-
+      // if the document exists
       if (docSnap.exists()) {
         const data = docSnap.data();
         const savedList = data.saved_list || [];
         console.log(savedList);
+        // if the plan is not already favourited, add it
         if (!savedList.includes(planName)) {
           await this.addListItem(docRef, docSnap, "saved_list", planName);
           console.log(`Plan ${planName} added to favourites.`);
         } else {
+        // if the plan is already saved, delete it
           await this.deleteListItem(docRef, docSnap, "saved_list", planName);
           console.log(`Plan ${planName} is removed from favourites.`);
         }
@@ -80,6 +131,23 @@ export default {
       // refresh the rest
         this.fetchAndUpdateData(String(this.userEmail));
         this.fetchPlans();
+      }
+    },
+    async toggleLike(plan_Name) {
+      // get document of that liked users from collection Likes
+      const docRef = doc(db, "Likes", plan_Name);
+      const docSnap = await getDoc(docRef);
+
+      if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
+        // remove thae users from liked it is already there
+        await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // rather than finding the exact plan in temp then updating the like -> simply re get everything
+        this.fetchAndUpdateLikes();
+      } else {
+        // add the item to their saved list
+        await this.addListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        // rather than finding the exact plan in temp then updating the like -> simply re get everything
+        this.fetchAndUpdateLikes();
       }
     },
     async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
@@ -114,21 +182,44 @@ export default {
         });
       }
     },
-
+    //get more plans
     loadMore() {
       this.length = this.length + 3;
       this.tempArray = this.allPlans.slice();
       this.temp = this.tempArray.slice(0, this.length);
     },
+    //get the colour of the heart
     heartColor(planId) {
-      console.log('heart color is determined');
       return this.favorites.includes(planId) ? 'mdi-heart':'mdi-heart-outline';
 
     },
+    //get the colour of the thumbs up
     likeColor(planId) {
-      console.log('like color is determined');
-      return this.liked.includes(planId) ? 'mdi-thumb-up':'mdi-thumb-up-outline';
+      for (let i = 0; i < this.result.length; i++) {
+        if (this.result[i].planId == planId) {
+          return this.result[i].liked ? 'mdi-thumb-up':'mdi-thumb-up-outline';
+        }
+      }
 
+    },
+    likeNum(planId) {
+      for (let i=0; i <this.result.length;i++) {
+        if (this.result[i].planId == planId) {
+          return this.result[i].likeCount;
+        }
+      }
+    },
+    // get number of likes for a specific planId
+    async getNumLikes(planId) {
+      const docRef = doc(db, "Likes", planId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const likedUsers = docSnap.data().Liked_Users || [];
+        console.log(likedUsers)
+        this.likeCount = likedUsers.length > 0 ? likedUsers.length : 0;
+        console.log(this.likeCount)
+        return this.likeCount;
+      }
     },
     goToSinglePlan(planId) {
       console.log(planId);
@@ -165,13 +256,13 @@ export default {
       <v-row>
         <v-col v-for="output in temp" cols="4">
           
-          <v-card class="mx-auto card" max-width="300" max-height="250" >
+          <v-card class="mx-auto card" max-width="300" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
             <v-img
               class="align-end text-white"
               height="150px"
               src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
               cover
-              v-on:click = "goToSinglePlan(output.planId)"
+              
             >
             <v-card-title>{{ output.Plan_Name }}</v-card-title>
           </v-img>
@@ -179,14 +270,14 @@ export default {
             
 
             <v-row align="center">
-              <v-col cols="8">
+              <v-col cols="6">
                 <v-card-text>
-                    <div>{{ output.num_likes }} likes</div>
+                    <div>{{ likeNum(output.planId) }} likes</div>
                     <div class="truncate">{{ output.plan_description }}</div>
                   </v-card-text>
               </v-col>
 
-              <v-col cols="1">
+              <v-col cols="6">
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn
@@ -194,34 +285,18 @@ export default {
                     icon
                     size="small"
                     variant="plain"
-                    @click="toggleHeart(output.planId)"
+                    @click.stop="toggleHeart(output.planId)"
                   >
                     <v-icon>{{
                       // heart ? "mdi-heart" : "mdi-heart-outline"
                       heartColor(output.planId)
                     }}</v-icon>
                   </v-btn>
+                  <v-btn color="#0077B6" icon small variant="plain" size="small" @click.stop="toggleLike(output.planId)">
+                      <v-icon>{{likeColor(output.planId)}}</v-icon>
+                    </v-btn>
                 </v-card-actions>
               </v-col>
-              <v-col cols="3">
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="error"
-                  icon
-                  size="small"
-                  variant="plain"
-                  @click="toggleLike(output.planId)"
-                >
-                  <v-icon>
-                    {{
-                    likeColor(output.planId)
-                  }}
-                  </v-icon>
-                </v-btn>
-                
-              </v-card-actions>
-            </v-col>
             </v-row>
           </v-card>
         </v-col>
