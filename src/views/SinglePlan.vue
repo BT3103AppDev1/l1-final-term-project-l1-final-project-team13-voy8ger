@@ -102,11 +102,13 @@ export default {
 
         // get ALL location details of that plan
         this.locationSnapshot = []
-        console.log(docSnap.data().location_list[1]);
 
         // Iterate over the snapshot to access each document
         this.plan.location_list.forEach(doc => {
-            this.locationSnapshot.push(doc.route);
+            this.locationSnapshot.push({'route':doc.route, 
+            'lat':doc.latitude, 
+            'lng':doc.longitude, 
+            'street':doc.street_number});
         });
 
         // check if user has favourited this plan or not -> show that user has fav it
@@ -280,9 +282,11 @@ export default {
     },
 
     // function to go a single Location view via routing
-    goToSingleLocation() {
+    // happens when you click on 1 location
+    goToSingleLocation(latitude,longitude) {
       this.$router.push({ name: "LocationView", query: {
-        id: planId
+        lat: latitude,
+        lng: longitude
       } });
     },
 
@@ -366,8 +370,8 @@ export default {
 
       <!-- Location List -->
       <div class="my-4">
-        <v-chip v-for="locations in locationSnapshot" class="mr-2 mb-2" @click="goToSingleLocation" >
-          {{locations }}
+        <v-chip v-for="locations in locationSnapshot" class="mr-2 mb-2" @click="goToSingleLocation(locations.lat, locations.lng)" >
+          {{locations.route}}
         </v-chip>
       </div>
 

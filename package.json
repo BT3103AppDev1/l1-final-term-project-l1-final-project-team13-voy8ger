@@ -31,6 +31,7 @@
     "vue-google-autocomplete": "^1.1.4",
     "vue-prism-editor": "2.0.0-alpha.2",
     "vue-router": "^4.3.0",
+    "vue3-google-map": "^0.20.0",
     "vuetify": "^3.5.11"
   },
   "devDependencies": {
