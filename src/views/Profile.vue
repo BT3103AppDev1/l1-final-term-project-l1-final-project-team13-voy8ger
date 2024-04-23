@@ -13,7 +13,7 @@
       >
         <div class="d-flex flex-column">
           <v-avatar size="100" class="mb-2">
-            <img :src="user.profilePic" alt="user profile picture" />
+            <v-img :src="user.profilePic" alt="user profile picture" />
           </v-avatar>
           <h4>{{ user.name }}</h4>
         </div>
