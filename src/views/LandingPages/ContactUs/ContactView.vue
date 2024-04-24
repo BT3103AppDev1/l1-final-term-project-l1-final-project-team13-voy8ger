@@ -25,7 +25,7 @@ onMounted(() => {
 
 </script>
 <template>
-  <NavbarDefault />
+  <NavbarDefault/>
   <section>
     <div class="page-header min-vh-100">
       <div class="container">

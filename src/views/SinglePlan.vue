@@ -107,8 +107,8 @@ export default {
         this.plan.location_list.forEach(doc => {
             this.locationSnapshot.push({'route':doc.route, 
             'lat':doc.latitude, 
-            'lng':doc.longitude, 
-            'street':doc.street_number});
+            'lng':doc.longitude
+          });
         });
 
         // check if user has favourited this plan or not -> show that user has fav it
@@ -229,15 +229,19 @@ export default {
 
     // to get the images of the plan
     async created() {
-      const folderRef = ref(storage, "Plans/" + String(this.$route.query.id));
+      // get the plan's Pictures
+      const docRef5 = doc(db, "Plans", String(this.$route.query.id));
 
       try {
-        const imageList = await listAll(folderRef);
-        for (const item of imageList.items) {
-          const imageUrl = await getDownloadURL(item);
-          this.imageUrls.push(imageUrl);
+        const docSnap5 = await getDoc(docRef5);
+        let pictures = []
+        pictures = docSnap5.data().Pictures
+        console.log(pictures)
+
+        for (const item of pictures) {
+          this.imageUrls.push(item);
         }
-         return true
+        return true
         //console.log(this.imageUrls);
       } catch (error) {
         console.error('Error fetching images:', error);
@@ -338,7 +342,7 @@ export default {
           </v-avatar>
         </v-col>
         <v-col cols="auto">
-          <v-card-title>{{userName}}'s</v-card-title>
+          <v-card-title>{{userName}}</v-card-title>
         </v-col>
       </v-row>
     </v-card-item>
