@@ -315,6 +315,7 @@ export default {
                   v-model="planData.just_location_list"
                   label="Location List"
                   class="mb-4"
+                  disabled
                 />
                 <v-select
                   v-model="planData.catagory_list"
