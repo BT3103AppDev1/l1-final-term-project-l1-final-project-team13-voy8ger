@@ -14,6 +14,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import { start } from "@popperjs/core";
 
 ChartJS.register(
   Title,
@@ -23,7 +24,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale
 );
-
+// using chartjs to create a bar chart
 export default {
   name: "BarChart",
   components: { Bar },
@@ -85,9 +86,10 @@ export default {
       },
       plugins: {
         legend: {
-          display: true,
+          display: false,
           position: "top",
         },
+
         tooltip: {
           callbacks: {
             // Custom tooltip to display values with dollar sign
@@ -96,6 +98,18 @@ export default {
             },
           },
         },
+        title: {
+          display: true,
+          text: 'Bar Chart of Spending', // Title text
+          font: {
+            size: 20 // Sets the font size of the title
+          },
+          padding: {
+            top: 10,
+            bottom: 30 // Adds padding around the title
+          },
+          align: 'start', 
+        }
       },
     };
 
