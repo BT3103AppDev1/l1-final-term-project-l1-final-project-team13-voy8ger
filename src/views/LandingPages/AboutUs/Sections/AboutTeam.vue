@@ -18,12 +18,7 @@ import marquez from "@/assets/img/ivana-square.jpg";
             The Executive Team
           </h3>
 
-          <!--
-          <p class="text-white opacity-8 mb-0">
-            There’s nothing I really wanted to do in life that I wasn’t able to
-            get good at. That’s my skill.
-          </p>
-        -->
+          
 
         </div>
 
