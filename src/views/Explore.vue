@@ -40,6 +40,7 @@ export default {
       } 
     });
   },
+
   methods: {
 
     async fetchAndUpdateData(userEmail) {
@@ -54,14 +55,13 @@ export default {
         this.favorites.push(element);
       });
 
-      console.log(this.favorites);
     },
 
     async fetchPlans() {
       const querySnapshot = await getDocs(collection(db, "Plans"));
-      this.allPlans = querySnapshot.docs.map((doc) => doc.data());
+      this.allPlans = querySnapshot.docs.map((doc) => ({...doc.data(), displayPic:doc.data().Pictures.length>0 ? doc.data().Pictures[0] : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"}) );
       this.tempArray = this.allPlans.slice();
-      this.temp = this.tempArray.slice(0, this.length);
+      this.temp = this.tempArray.slice(0, this.length);  
     },
     async fetchAndUpdateLikes() {
       const querySnapshot2 = await getDocs(collection(db, "Plans"));
@@ -103,12 +103,10 @@ export default {
         let deets = (await getDoc(doc(db, "Plans", element))).data();
           deets.liked = tempLike
           deets.likeCount = likeCount;
-          console.log(deets)
           this.result.push(deets)
 
       });
 
-      console.log(this.result);
     },
     async toggleHeart(planName) {
       const docRef = doc(db, "Users", this.userEmail);
@@ -157,7 +155,7 @@ export default {
           const data = docSnap.data();
           // Get the list from the document data
           const list = data[listFieldName];
-          console.log(list);
+          
           // Remove the item from the list
           const updatedList = list.filter((item) => item !== itemToRemove);
           // Update the document with the modified list
@@ -186,8 +184,13 @@ export default {
     loadMore() {
       if (this.user) {
         this.length = this.length + 3;
-        this.tempArray = this.allPlans.slice();
-        this.temp = this.tempArray.slice(0, this.length);
+        if (this.length <= this.allPlans.length) {
+          this.tempArray = this.allPlans.slice();
+          this.temp = this.tempArray.slice(0, this.length);
+        } else {
+          this.$toast.error(`No more plans :(`)
+        }
+        
       } else {
         this.$router.push({
         name: "LogIn",
@@ -223,14 +226,14 @@ export default {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const likedUsers = docSnap.data().Liked_Users || [];
-        console.log(likedUsers)
+
         this.likeCount = likedUsers.length > 0 ? likedUsers.length : 0;
-        console.log(this.likeCount)
+
         return this.likeCount;
       }
     },
     goToSinglePlan(planId) {
-      console.log(planId);
+      
       // go to the singlePlan view and send the planId
       // so that details related to this plan can be retrived there
       this.$router.push({ name: "SinglePlan", query: {
@@ -268,7 +271,7 @@ export default {
             <v-img
               class="align-end text-white"
               height="150px"
-              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+              :src= "output.displayPic"
               cover
               
             >
