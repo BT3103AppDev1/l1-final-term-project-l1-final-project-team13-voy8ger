@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 
 //example components
-//import NavbarDefault from "@/components/NavbarDefault.vue";
+import NavbarDefault from "@/components/NavbarDefault.vue";
 import DefaultFooter from "@/components/FooterDefault.vue";
 
 
@@ -25,7 +25,7 @@ onMounted(() => {
 
 </script>
 <template>
-
+  <NavbarDefault />
   <section>
     <div class="page-header min-vh-100">
       <div class="container">
