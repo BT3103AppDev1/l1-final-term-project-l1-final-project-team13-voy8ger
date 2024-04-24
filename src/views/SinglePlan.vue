@@ -322,7 +322,7 @@ export default {
     max-width="800"
     >
 
-    <div class="gallery-wrap" v-if="(this.imageUrls.length > 0) || (this.HasPicture == true)">
+    <div class="gallery-wrap" v-if="(imageUrls.length > 0) || (HasPicture == true)">
       <div class = "gallery">
       <v-carousel>
           <v-carousel-item v-for="(imageUrl,i) in imageUrls" :key="i">
