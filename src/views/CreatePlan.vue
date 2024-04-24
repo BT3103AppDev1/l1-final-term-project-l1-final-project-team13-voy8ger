@@ -19,6 +19,8 @@ import {
   doc,
   arrayUnion,
 } from "firebase/firestore";
+
+import VueGoogleAutocomplete from "vue-google-autocomplete";
 </script>
 
 <script>
@@ -44,7 +46,7 @@ export default {
         "Hobbies & Crafts",
         "Others",
       ],
-      locationList: "",
+      locationList: [],
       planDate: new Date(),
       planDescription: "",
       Pictures: [],
@@ -52,9 +54,23 @@ export default {
       creatorRating: null,
       creatorReview: "",
       creatorSpending: 0,
+      autocomplete: null,
+
+      address: null
     };
   },
   computed: {
+    // extract the name from the location list and return it
+    getLocationNames() {
+      let emp_list = []
+      for(let index = 0; index < this.locationList.length; index++) {
+        console.log(this.locationList[index])
+        console.log(this.locationList[index].route)
+        emp_list.push(this.locationList[index].street_number + " " + this.locationList[index].route);
+      }
+      return emp_list;
+    },
+
     isFormValid() {
       return (
         this.isRatingValid &&
@@ -89,8 +105,14 @@ export default {
     DefaultFooter,
     MaterialButton,
     MaterialSwitch,
+    VueGoogleAutocomplete
+  },
+  mounted() {
+    
   },
   methods: {
+    
+    
     async savePlanToFs() {
       await this.fetchCreatorId();
       if (!this.isFormValid) {
@@ -182,7 +204,7 @@ export default {
       this.creatorId = "placeholder-creator-id";
       this.creatorSpending = 0;
       this.categories = [];
-      this.locationList = "";
+      this.locationList = [];
       this.planDate = new Date();
       this.planDescription = "";
       this.Pictures = [];
@@ -194,11 +216,27 @@ export default {
     removePicture(index) {
       this.Pictures.splice(index, 1);
     },
+
+    // HANDLING OF LOCATION 
+    getAddressData: function (addressData, placeResultData, id) {
+        this.address = addressData;
+
+        // temp object to store deets of one location
+        var temp_location = {}
+        temp_location.latitude = this.address.latitude;
+        temp_location.longitude = this.address.longitude;
+        temp_location.route = this.address.route;
+        temp_location.street_number = this.address.street_number;
+
+        // push this to main location list for that plan
+        this.locationList.push(temp_location);
+    },
   },
 };
 </script>
 
 <template>
+  
   <div class="container position-sticky z-index-sticky top-0">
     <div class="row">
       <div class="col-12">
@@ -232,11 +270,20 @@ export default {
               >
                 Upload Photos
               </MaterialButton>
+
+              <vue-google-autocomplete 
+                id="map" classname="form-control" 
+                :country="['SG']" 
+                placeholder="Find Location" 
+                v-on:placechanged="getAddressData">
+              </vue-google-autocomplete>
+
               <v-text-field
-                v-model="locationList"
+                v-model="getLocationNames"
                 label="Location List"
                 class="mb-4"
               />
+
               <v-select
                 v-model="categories"
                 :items="availableCategories"
@@ -339,10 +386,15 @@ export default {
             fullWidth
             >Save Plan</MaterialButton
           >
+
         </div>
+
+        
       </div>
     </div>
   </div>
+
+  <input id="search_input" name = "search_input">
 
   <DefaultFooter />
 </template>

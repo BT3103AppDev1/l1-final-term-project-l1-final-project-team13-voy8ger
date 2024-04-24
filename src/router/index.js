@@ -12,6 +12,7 @@ import ContactView from "../views/LandingPages/ContactUs/ContactView.vue";
 import EditProfile from "@/views/EditProfile.vue";
 import EditPlan from "@/views/EditPlan.vue";
 import Analytics from "@/views/Analytics.vue";
+import LocationView from "@/views/LocationView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -89,6 +90,11 @@ const router = createRouter({
       name: "UpdatePlan",
       component: EditPlan,
       props: true,
+    },
+    {
+      path: "/LocationView",
+      name: "LocationView",
+      component: LocationView,
     },
   ],
 });

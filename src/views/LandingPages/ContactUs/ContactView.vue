@@ -4,8 +4,7 @@ import { onMounted } from "vue";
 //example components
 //import NavbarDefault from "@/components/NavbarDefault.vue";
 import DefaultFooter from "@/components/FooterDefault.vue";
-//import DefaultNavbar from "@/examples/navbars/NavbarDefault.vue";
-//import DefaultFooter from "@/examples/footers/FooterDefault.vue";
+
 
 //image
 import image from "@/assets/img/illustrations/illustration-signin.jpg";
@@ -15,30 +14,17 @@ import MaterialInput from "@/components/MaterialInput.vue";
 import MaterialTextArea from "@/components/MaterialTextArea.vue";
 import MaterialButton from "@/components/MaterialButton.vue";
 
+
 // material-input
 import setMaterialInput from "@/assets/js/material-input";
 onMounted(() => {
   setMaterialInput();
 });
+
+
+
 </script>
 <template>
-
-  <!--
-  <div class="container position-sticky z-index-sticky top-0">
-    <div class="row">
-      <div class="col-12">
-        <DefaultNavbar
-          :sticky="true"
-          :action="{
-            route: 'https://www.creative-tim.com/product/vue-material-kit-pro',
-            color: 'bg-gradient-success',
-            label: 'Buy Now',
-          }"
-        />
-      </div>
-    </div>
-  </div>
--->
 
   <section>
     <div class="page-header min-vh-100">
@@ -108,12 +94,16 @@ onMounted(() => {
                     </div>
                     <div class="row">
                       <div class="col-md-12 text-center">
+                        
+                        
                         <MaterialButton
                           variant="gradient"
                           color="success"
                           class="mt-3 mb-0"
+                          
                           >Send Message</MaterialButton
                         >
+                        
                       </div>
                     </div>
                   </div>
