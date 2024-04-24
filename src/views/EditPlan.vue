@@ -38,6 +38,7 @@ const planData = reactive({
   creator_id: "placeholder-creator-id",
   catagory_list: [],
   location_list: [],
+  just_location_list: [],
   Date: new Date(),
   plan_description: "",
   Pictures: [],
@@ -66,7 +67,11 @@ async function fetchPlanDetails() {
     if (planDocSnap.exists()) {
       Object.assign(planData, planDocSnap.data());
       planData.Date = new Date(planData.Date.seconds * 1000);
-      // console.log(planData);
+
+      planDocSnap.data().location_list.map(val => {
+        planData.just_location_list.push(val.route)
+      })
+
     } else {
       console.error("No such plan!");
     }
@@ -77,12 +82,13 @@ async function fetchPlanDetails() {
 
 function getAddressData(addressData) {
   planData.address = addressData;
-  planData.location_list.push({
-    latitude: addressData.latitude,
-    longitude: addressData.longitude,
-    route: addressData.route,
-  });
+  // planData.location_list.push({
+  //   latitude: addressData.latitude,
+  //   longitude: addressData.longitude,
+  //   route: addressData.route,
+  // });
   console.log(planData.address);
+  console.log(addressData);
 }
 
 const validations = {
@@ -306,7 +312,7 @@ export default {
                   v-on:placechanged="getAddressData"
                 />
                 <v-text-field
-                  v-model="planData.location_list"
+                  v-model="planData.just_location_list"
                   label="Location List"
                   class="mb-4"
                 />
