@@ -178,6 +178,11 @@ export default {
         let deets = (await getDoc(doc(db, "Plans", element))).data();
         deets.AllowLike = tempLike
         deets.likeCount = likeCount;
+        if (deets.Pictures.length > 0) {
+          deets.displayPic = deets.Pictures[0];
+        } else {
+          deets.displayPic = "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png";
+        }
 
         this.temp.push(deets);
       });
@@ -243,7 +248,7 @@ export default {
             <v-img
             class="align-end text-white"
             height="150"
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+            :src="output.displayPic"
             cover
             >
 
