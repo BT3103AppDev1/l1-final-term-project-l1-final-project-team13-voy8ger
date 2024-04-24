@@ -17,6 +17,7 @@ import {
   addDoc,
   updateDoc,
   doc,
+  setDoc,
   arrayUnion,
 } from "firebase/firestore";
 
@@ -56,14 +57,14 @@ export default {
       creatorSpending: 0,
       autocomplete: null,
 
-      address: null
+      address: null,
     };
   },
   computed: {
     // extract the name from the location list and return it
     getLocationNames() {
-      let emp_list = []
-      for(let index = 0; index < this.locationList.length; index++) {
+      let emp_list = [];
+      for (let index = 0; index < this.locationList.length; index++) {
         emp_list.push(this.locationList[index].route);
       }
       return emp_list;
@@ -103,15 +104,15 @@ export default {
     DefaultFooter,
     MaterialButton,
     MaterialSwitch,
-    VueGoogleAutocomplete
+    VueGoogleAutocomplete,
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
-    
-    
     async savePlanToFs() {
+      if(this.Pictures.length == 0) {
+          this.Pictures.push("https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png");
+      }
+
       await this.fetchCreatorId();
       if (!this.isFormValid) {
         if (!this.isPlanNameValid) {
@@ -160,6 +161,10 @@ export default {
         console.log(userRef);
         await updateDoc(userRef, {
           plans_list: arrayUnion(docRef.id),
+        });
+
+        await setDoc(doc(db, "Likes", docRef.id), {
+          Liked_Users: [],
         });
 
         this.$toast.success("Plan saved successfully!");
@@ -216,25 +221,24 @@ export default {
       this.Pictures.splice(index, 1);
     },
 
-    // HANDLING OF LOCATION 
+    // HANDLING OF LOCATION
     getAddressData: function (addressData, placeResultData, id) {
-        this.address = addressData;
+      this.address = addressData;
 
-        // temp object to store deets of one location
-        var temp_location = {}
-        temp_location.latitude = this.address.latitude;
-        temp_location.longitude = this.address.longitude;
-        temp_location.route = this.address.route;
+      // temp object to store deets of one location
+      var temp_location = {};
+      temp_location.latitude = this.address.latitude;
+      temp_location.longitude = this.address.longitude;
+      temp_location.route = this.address.route;
 
-        // push this to main location list for that plan
-        this.locationList.push(temp_location);
+      // push this to main location list for that plan
+      this.locationList.push(temp_location);
     },
   },
 };
 </script>
 
 <template>
-  
   <div class="container position-sticky z-index-sticky top-0">
     <div class="row">
       <div class="col-12">
@@ -269,11 +273,13 @@ export default {
                 Upload Photos
               </MaterialButton>
 
-              <vue-google-autocomplete 
-                id="map" classname="form-control" 
-                :country="['SG']" 
-                placeholder="Find Location" 
-                v-on:placechanged="getAddressData">
+              <vue-google-autocomplete
+                id="map"
+                classname="form-control"
+                :country="['SG']"
+                placeholder="Find Location"
+                v-on:placechanged="getAddressData"
+              >
               </vue-google-autocomplete>
 
               <v-text-field
@@ -384,15 +390,12 @@ export default {
             fullWidth
             >Save Plan</MaterialButton
           >
-
         </div>
-
-        
       </div>
     </div>
   </div>
 
-  <input id="search_input" name = "search_input">
+  <input id="search_input" name="search_input" />
 
   <DefaultFooter />
 </template>

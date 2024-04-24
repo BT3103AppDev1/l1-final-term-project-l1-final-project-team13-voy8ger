@@ -51,7 +51,7 @@ export default {
       likeCount: '',
       planId: this.$route.query.id,
 
-      HasPicture: false
+      HasPicture: true
     };
   }, 
   
@@ -241,6 +241,7 @@ export default {
         for (const item of pictures) {
           this.imageUrls.push(item);
         }
+      
         return true
         //console.log(this.imageUrls);
       } catch (error) {
@@ -314,14 +315,14 @@ export default {
     </div>
   </div>
 
-  <body v-if="(imageUrls.length > 0) || (HasPicture == true)">
+  <body>
     <div class="page-header min-vh-90">
     <v-card 
     class="mx-auto my-1"
     max-width="800"
     >
 
-    <div class="gallery-wrap">
+    <div class="gallery-wrap" v-if="(this.imageUrls.length > 0) || (this.HasPicture == true)">
       <div class = "gallery">
       <v-carousel>
           <v-carousel-item v-for="(imageUrl,i) in imageUrls" :key="i">

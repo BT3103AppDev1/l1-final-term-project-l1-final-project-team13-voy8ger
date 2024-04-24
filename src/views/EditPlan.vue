@@ -6,7 +6,8 @@ import MaterialSwitch from "@/components/material_components/MaterialSwitch.vue"
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { db, storage } from "../firebase.js";
-import { ref as vueRef, reactive, onMounted } from "vue";
+import { ref as vueRef, reactive, onMounted, computed } from "vue";
+import VueGoogleAutocomplete from "vue-google-autocomplete";
 import { useRoute, useRouter } from "vue-router";
 import { createToaster } from "@meforma/vue-toaster";
 import {
@@ -36,7 +37,7 @@ const planData = reactive({
   numberOfVoyagers: 0,
   creator_id: "placeholder-creator-id",
   catagory_list: [],
-  location_list: "",
+  location_list: [],
   Date: new Date(),
   plan_description: "",
   Pictures: [],
@@ -46,6 +47,8 @@ const planData = reactive({
   creator_spending: 0,
   num_likes: 0,
   planId: "",
+  autocomplete: null,
+  address: null,
 });
 
 onMounted(() => {
@@ -72,7 +75,58 @@ async function fetchPlanDetails() {
   }
 }
 
+function getAddressData(addressData) {
+  planData.address = addressData;
+  planData.location_list.push({
+    latitude: addressData.latitude,
+    longitude: addressData.longitude,
+    route: addressData.route,
+  });
+  console.log(planData.address);
+}
+
+const validations = {
+  isRatingValid: computed(
+    () => planData.creator_rating >= 0 && planData.creator_rating <= 5
+  ),
+  isNumberOfVoyagersValid: computed(() => planData.numberOfVoyagers > 0),
+  isSpendingValid: computed(() => planData.creator_spending >= 0),
+  isPlanNameValid: computed(() => planData.Plan_Name.trim() !== ""),
+  isDateValid: computed(() => !isNaN(new Date(planData.Date))),
+  isDescriptionValid: computed(() => planData.plan_description.trim() !== ""),
+  isFormValid: computed(
+    () =>
+      validations.isRatingValid.value &&
+      validations.isNumberOfVoyagersValid.value &&
+      validations.isSpendingValid.value &&
+      validations.isPlanNameValid.value &&
+      validations.isDateValid.value &&
+      validations.isDescriptionValid.value
+  ),
+};
+
 async function updatePlan() {
+  if (!validations.isFormValid.value) {
+    if (!validations.isPlanNameValid.value) {
+      toaster.error("Plan name cannot be empty");
+    }
+    if (!validations.isNumberOfVoyagersValid.value) {
+      toaster.error("Number of voyagers must be greater than 0");
+    }
+    if (!validations.isDateValid.value) {
+      toaster.error("Date must be selected");
+    }
+    if (!validations.isDescriptionValid.value) {
+      toaster.error("Description cannot be empty");
+    }
+    if (!validations.isRatingValid.value) {
+      toaster.error("Rating must be between 0 and 5");
+    }
+    if (!validations.isSpendingValid.value) {
+      toaster.error("Spending cannot be negative");
+    }
+    return;
+  }
   const planDocRef = doc(db, "Plans", planId.value);
   console.log("Plan ready to update:", planData);
   try {
@@ -244,6 +298,13 @@ export default {
                   fullWidth
                   >Upload Photos</MaterialButton
                 >
+                <vue-google-autocomplete
+                  id="map"
+                  classname="form-control"
+                  :country="['SG']"
+                  placeholder="Find Location"
+                  v-on:placechanged="getAddressData"
+                />
                 <v-text-field
                   v-model="planData.location_list"
                   label="Location List"
