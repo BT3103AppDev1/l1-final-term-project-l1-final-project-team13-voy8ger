@@ -76,14 +76,6 @@ export default {
         // rather than finding the exact plan in temp then updating the like (react cannot update it :()
         // -> simply re get everything despite possible lag
         this.fetchAndUpdateData(this.userEmail);
-
-        // loop through temp list, find this plan then replace it's value for allowLike
-        // for(let i = 0; i < this.temp.length; i++) {
-        //   if(this.temp[i].Plan_Name == plan_Name) {
-        //     this.temp[i].AllowLike = true
-        //   }
-        // }
-
       } else {
         // add the item to their saved list
         await this.addListItemLike(docRef, docSnap, "Liked_Users", String(this.userEmail));
@@ -91,13 +83,6 @@ export default {
         // rather than finding the exact plan in temp then updating the like (react cannot update it :()
         // -> simply re get everything despite possible lag
         this.fetchAndUpdateData(this.userEmail);
-
-        // loop through temp list, find this plan then replace it's value for allowLike
-        // for(let i = 0; i < this.temp.length; i++) {
-        //   if(this.temp[i].Plan_Name == plan_Name) {
-        //     this.temp[i].AllowLike = false
-        //   }
-        // }
       }
     },
 
