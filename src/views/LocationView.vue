@@ -4,9 +4,19 @@ import DefaultFooter from "../components/FooterDefault.vue";
 import Header from "../components/Header.vue";
 
 import { GoogleMap, Marker } from 'vue3-google-map'
-const center = { lat: 40.689247, lng: -74.044502 }
-// const center = { lat: this.$route.query.lat, lng: this.$route.query.lng }
-// console.log(this.$route.query.lat);
+</script>
+
+<script>
+export default {
+  data() {
+    return {
+      center: ''
+    }
+  },
+  mounted() {
+    this.center = { lat: parseFloat(this.$route.query.lat), lng:  parseFloat(this.$route.query.lng) }
+  }
+}
 </script>
 
 <template>
@@ -20,14 +30,10 @@ const center = { lat: 40.689247, lng: -74.044502 }
       <GoogleMap
         api-key="AIzaSyB91PgHyhp9tvua_eCT5eiiqSQxXTcZoe0"
         style="width: 100%; height: 500px; margin-top: 10%;"
-        :center="center"
+        :center="this.center"
         :zoom="15"
         >
-            <Marker :options="{ position: center }" />
+            <Marker :options="{ position: this.center }" />
         </GoogleMap>
     </div>
 </template>
-
-<script>
-
-</script>

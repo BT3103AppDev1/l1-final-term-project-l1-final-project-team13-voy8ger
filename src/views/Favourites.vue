@@ -189,7 +189,9 @@ export default {
       // go to the singlePlan view and send the planId
       // so that details related to this plan can be retrived there
       this.$router.push({ name: "SinglePlan", query: {
-        id: planId
+        id: planId,
+        lat: 40.689247,
+        lng: -74.044502
       } });
     },
 

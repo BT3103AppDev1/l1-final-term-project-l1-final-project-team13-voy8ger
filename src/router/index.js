@@ -92,10 +92,11 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/LocationView",
+      path: "/location-view",
       name: "LocationView",
       component: LocationView,
-    },
+      props: true
+    }
   ],
 });
 

@@ -64,9 +64,7 @@ export default {
     getLocationNames() {
       let emp_list = []
       for(let index = 0; index < this.locationList.length; index++) {
-        console.log(this.locationList[index])
-        console.log(this.locationList[index].route)
-        emp_list.push(this.locationList[index].street_number + " " + this.locationList[index].route);
+        emp_list.push(this.locationList[index].route);
       }
       return emp_list;
     },
@@ -167,6 +165,7 @@ export default {
         this.$toast.success("Plan saved successfully!");
         this.resetForm();
       } catch (e) {
+        console.log(e);
         this.$toast.error("Error saving the plan:", e);
       }
     },
@@ -226,7 +225,6 @@ export default {
         temp_location.latitude = this.address.latitude;
         temp_location.longitude = this.address.longitude;
         temp_location.route = this.address.route;
-        temp_location.street_number = this.address.street_number;
 
         // push this to main location list for that plan
         this.locationList.push(temp_location);
