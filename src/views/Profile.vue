@@ -305,7 +305,11 @@ export default {
 .posts {
   /* Add your styles here */
 }
-
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .card:hover {
   transform: scale(1.05); /* Increase the size slightly */
   transition: transform 0.2s ease; /* Add a smooth transition */
