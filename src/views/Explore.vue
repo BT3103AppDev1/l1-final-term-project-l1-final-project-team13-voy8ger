@@ -37,7 +37,7 @@ export default {
         this.fetchPlans();
         this.fetchAndUpdateData(this.userEmail);
         this.fetchAndUpdateLikes();
-      }
+      } 
     });
   },
   methods: {
@@ -184,9 +184,17 @@ export default {
     },
     //get more plans
     loadMore() {
-      this.length = this.length + 3;
-      this.tempArray = this.allPlans.slice();
-      this.temp = this.tempArray.slice(0, this.length);
+      if (this.user) {
+        this.length = this.length + 3;
+        this.tempArray = this.allPlans.slice();
+        this.temp = this.tempArray.slice(0, this.length);
+      } else {
+        this.$router.push({
+        name: "LogIn",
+        
+      });
+      }
+      
     },
     //get the colour of the heart
     heartColor(planId) {
@@ -310,7 +318,7 @@ export default {
             density="default"
             @click="loadMore()"
           >
-            load more!
+          {{ user ? 'load more!' : 'Sign In' }}
           </v-btn>
         </v-col>
       </v-row>
