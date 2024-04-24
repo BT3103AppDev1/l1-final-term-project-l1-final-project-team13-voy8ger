@@ -1,5 +1,6 @@
 <script setup>
 import logoDark from "@/assets/img/logo-ct-dark.png";
+import VOY8GER from "@/assets/img/VOY8GER.jpeg";
 defineProps({
   brand: {
     type: Object,
@@ -8,7 +9,7 @@ defineProps({
     route: "",
     default: () => ({
       name: "VOY8GER",
-      logo: logoDark,
+      logo: VOY8GER,
       route: "/",
     }),
   },
@@ -51,26 +52,21 @@ defineProps({
             name: "about us",
             href: "/about-us",
           },
-          
 
           {
             name: "premium tools",
             href: "https://www.travelperk.com/business-travel/business-travel-management-global-1/?utm_source=google&utm_medium=cpc&utm_campaign=1250_G_SG_EN_GEN_PM_TravelManagement&utm_term=travel%20management%20tool&utm_content=&hl1=&gad_source=1&gclid=CjwKCAjwh4-wBhB3EiwAeJsppIfocPecGbpc2Ro-fsWhRXXjzoHtEveCvF507b--Vxwq2YbQmnd0xxoCMNYQAvD_BwE",
           },
           { name: "blog", href: "https://eatbook.sg/" },
-          
         ],
-
       },
       {
         name: "resources",
         items: [
-          
           {
             name: "affiliate program",
             href: "https://affiliates.expediagroup.com/en-us/home",
           },
-          
         ],
       },
       {
@@ -80,7 +76,7 @@ defineProps({
             name: "contact us",
             href: "/contact-us",
           },
-          
+
           {
             name: "knowledge center",
             href: "https://www.tripadvisor.com.sg/",
@@ -89,13 +85,11 @@ defineProps({
             name: "sponsorships",
             href: "https://www.traveltechasia.com/sponsorship",
           },
-          
         ],
       },
       {
         name: "legal",
         items: [
-          
           {
             name: "terms & conditions",
             href: "https://www.termsfeed.com/blog/sample-terms-and-conditions-template/",
@@ -108,7 +102,6 @@ defineProps({
             name: "licenses (EULA)",
             href: "https://www.pandadoc.com/license-agreement-template/",
           },
-          
         ],
       },
     ],
@@ -151,14 +144,11 @@ defineProps({
         >
           <h6 class="text-sm">{{ name }}</h6>
           <ul class="flex-column ms-n3 nav">
-
             <li class="nav-item" v-for="item of items" :key="item.name">
               <a class="nav-link" :href="item.href" target="_blank">
                 {{ item.name }}
               </a>
             </li>
-
-            
           </ul>
         </div>
 
