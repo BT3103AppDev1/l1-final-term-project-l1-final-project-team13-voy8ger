@@ -109,6 +109,10 @@ export default {
   mounted() {},
   methods: {
     async savePlanToFs() {
+      if(this.Pictures.length == 0) {
+          this.Pictures.push("https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png");
+      }
+
       await this.fetchCreatorId();
       if (!this.isFormValid) {
         if (!this.isPlanNameValid) {

@@ -80,7 +80,7 @@ export default {
    
     async fetchPlans() {
       const querySnapshot = await getDocs(collection(db, "Plans"));
-      this.allPlans = querySnapshot.docs.map((doc) => doc.data());
+      this.allPlans = querySnapshot.docs.map((doc) => ({...doc.data(), displayPic:doc.data().Pictures.length>0 ? doc.data().Pictures[0] : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"}) );
       function compare(a, b) {
         if (a.num_likes < b.num_likes)
           return 1;
@@ -335,7 +335,7 @@ export default {
           <v-img
             class="align-end text-white"
             height="150px"
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+            :src="output.displayPic"
             cover
             
           >

@@ -159,12 +159,14 @@ watch(
               >About Us</RouterLink
             >
           </li>
-
+          
+          <!--
           <li v-if="!isAuthenticated" class="nav-item">
             <RouterLink class="nav-link" :to="{ name: 'ContactUs' }"
               >Contact Us</RouterLink
             >
           </li>
+        -->
 
           <li class="nav-item dropdown dropdown-hover mx-2">
             <RouterLink
