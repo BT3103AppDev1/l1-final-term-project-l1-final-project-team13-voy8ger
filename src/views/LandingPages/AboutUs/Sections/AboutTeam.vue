@@ -34,11 +34,10 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-4"
-            :image="emma"
+            :image="william"
             :profile="{ name: 'FONG KAI JUN', link: 'javascript:;' }"
-            :position="{ label: 'UI Designer', color: 'success' }"
-            description="Artist is a term applied to a person who engages in an
-                    activity deemed to be an art."
+            :position="{ label: 'Developer', color: 'success' }"
+            description="Kai Jun is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
 
@@ -47,9 +46,8 @@ import marquez from "@/assets/img/ivana-square.jpg";
             class="mt-lg-4 mt-5"
             :image="william"
             :profile="{ name: 'GOPAL RADHAKRISHNAN RAMANEN BHARATWA', link: 'javascript:;' }"
-            :position="{ label: 'Boss', color: 'success' }"
-            description="Artist is a term applied to a person who engages in an
-                    activity deemed to be an art."
+            :position="{ label: 'Developer', color: 'success' }"
+            description="Ramanen is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
 
@@ -59,21 +57,19 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-4 z-index-2"
-            :image="ivana"
+            :image="william"
             :profile="{ name: 'JERON LIAW XUAN JUN', link: 'javascript:;' }"
-            :position="{ label: 'Athlete', color: 'success' }"
-            description="Artist is a term applied to a person who engages in an
-                    activity deemed to be an art."
+            :position="{ label: 'Developer', color: 'success' }"
+            description="Jeron is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-lg-4 mt-5 z-index-2"
-            :image="marquez"
+            :image="ivana"
             :profile="{ name: 'COCO LI XINRUI', link: 'javascript:;' }"
-            :position="{ label: 'JS Developer', color: 'success' }"
-            description="Artist is a term applied to a person who engages in an
-                    activity deemed to be an art."
+            :position="{ label: 'Developer', color: 'success' }"
+            description="Coco is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
 
@@ -84,11 +80,10 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-lg-4 mt-5 z-index-2"
-            :image="marquez"
+            :image="ivana"
             :profile="{ name: 'LAI HSUAN JUNG', link: 'javascript:;' }"
-            :position="{ label: 'JS Developer', color: 'success' }"
-            description="Artist is a term applied to a person who engages in an
-                    activity deemed to be an art."
+            :position="{ label: 'Developer', color: 'success' }"
+            description="Hsuan Jung is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
 
