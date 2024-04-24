@@ -10,7 +10,7 @@
         <label for="profilePicture">Profile Picture: </label>
         <div v-if="profilePicture">
           <v-avatar size="100" class="mb-2">
-            <img :src="profilePicture" alt="uploaded image" />
+            <v-img :src="profilePicture" alt="uploaded image" />
           </v-avatar>
         </div>
         <div v-else id="no-image">No Image</div>
