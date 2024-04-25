@@ -147,7 +147,6 @@ export default {
   async mounted() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if (user) {
         this.user.email = user.email;
         this.fetchAndUpdateData(this.user.email);
@@ -220,14 +219,12 @@ export default {
           const data = docSnap.data();
           // Get the list from the document data
           const list = data[listFieldName];
-          console.log(list);
           // Remove the item from the list
           const updatedList = list.filter((item) => item !== itemToRemove);
           // Update the document with the modified list
           await updateDoc(docRef, {
             [listFieldName]: updatedList,
           });
-          console.log("Item removed from the list: ", itemToRemove);
         } else {
           console.log("Document does not exist!");
         }
@@ -273,9 +270,6 @@ export default {
         this.user.bio = docSnap.data().bio;
       }
 
-      console.log("created: " + docSnap.data().plans_list);
-      console.log("saved: " + docSnap.data().saved_list);
-
       // refresh
       this.user.plans = [];
       // get all the plans out & put it into user.plans
@@ -307,9 +301,6 @@ export default {
         this.user.plans.push(deets);
       });
       this.user.saved = docSnap.data().saved_list;
-
-      console.log("created temp: " + this.user.plans);
-      console.log("saved temp: " + this.user.saved);
     },
     async getNumLikes(planId) {
       const docRef = doc(db, "Likes", planId);
