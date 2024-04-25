@@ -42,7 +42,8 @@ export default {
       allPlans: [],
       favorites: [],
       liked: [],
-      result: []
+      result: [],
+      count: [],
     };
   },
 
@@ -55,7 +56,7 @@ export default {
         this.user = user;
         this.userEmail = user.email;
         this.fetchAndUpdateData(this.userEmail);
-        this.fetchPlans();
+        // this.fetchPlans();
         this.fetchAndUpdateLikes();
       }
     });
@@ -78,31 +79,46 @@ export default {
       console.log(this.favorites);
     },
    
-    async fetchPlans() {
-      const querySnapshot = await getDocs(collection(db, "Plans"));
-      this.allPlans = querySnapshot.docs.map((doc) => ({...doc.data(), displayPic:doc.data().Pictures.length>0 ? doc.data().Pictures[0] : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"}) );
-      function compare(a, b) {
-        if (a.num_likes < b.num_likes)
-          return 1;
-        if (a.num_likes > b.num_likes)
-          return -1;
-        return 0;
-      }
-      this.tempArray = this.allPlans.slice();
-      this.temp = this.tempArray.sort(compare).slice(0, 3);
-    },
+    // async fetchPlans() {
+    //   const querySnapshot = await getDocs(collection(db, "Plans"));
+    //   this.allPlans = querySnapshot.docs.map((doc) => ({...doc.data()}) );
+    //   for (let i = 0; i < this.allPlans.length; i++) {
+    //     const docRef = doc(db, "Likes", this.allPlans[i].planId);
+    //       const docSnap = await getDoc(docRef);
+    //       if (docSnap.exists()) {
+    //         const likedUsers = docSnap.data().Liked_Users || [];
+    //         let likeCount = likedUsers.length > 0 ? likedUsers.length : 0;
+    //         let details = (await getDoc(doc(db, "Plans", this.allPlans[i].planId))).data();
+    //         details.likeCount = likeCount;
+    //         details.displayPic = details.Pictures.length > 0 ? details.Pictures[0] : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"
+    //         this.tempArray.push(details);
+    //       }
+    //   }
+
+    //   function compare(a, b) {
+    //     if (a.likeCount < b.likeCount)
+    //       return 1;
+    //     if (a.likeCount > b.likeCount)
+    //       return -1;
+    //     return 0;
+    //   }
+      
+    //   this.copy = this.tempArray.slice();
+    //   this.temp = this.copy.sort(compare).slice(0, 3);
+    //   console.log(this.copy)
+    // },
+
     async fetchAndUpdateLikes() {
       const querySnapshot2 = await getDocs(collection(db, "Plans"));
       this.liked = querySnapshot2.docs.map((doc) => doc.data().planId);
 
       this.result = []
-      const val = this.liked.map(async (element) => {
-
+      for (let i = 0; i < this.liked.length; i++) {
         let tempLike = false;
         let likeCount = 0;
 
         // get data if the user has liked this or not
-        const docRef3 = doc(db, "Likes", String(element));
+        const docRef3 = doc(db, "Likes", String(this.liked[i]));
         const docSnap3 = await getDoc(docRef3);
         if (docSnap3.exists()) {
           const data3 = docSnap3.data();
@@ -114,11 +130,10 @@ export default {
               tempLike = true;
             }
 
-            // get the number of likes for this plan
-            likeCount = await this.getNumLikes(element);
           } 
+          // get the number of likes for the plan
+          likeCount = Liked_Users.length
 
-          // for those plans find out number of likes for that plan as well
 
           // along with plan details pass in if user has liked this or not
           
@@ -128,15 +143,64 @@ export default {
           // })
 
         }
-        let deets = (await getDoc(doc(db, "Plans", element))).data();
+        let deets = (await getDoc(doc(db, "Plans", this.liked[i]))).data();
           deets.liked = tempLike
           deets.likeCount = likeCount;
+          deets.displayPic = deets.Pictures.length > 0 ? deets.Pictures[0] : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"
           console.log(deets)
           this.result.push(deets)
+      }
+      // const val = this.liked.map(async (element) => {
 
-      });
+        // let tempLike = false;
+        // let likeCount = 0;
 
+        // // get data if the user has liked this or not
+        // const docRef3 = doc(db, "Likes", String(element));
+        // const docSnap3 = await getDoc(docRef3);
+        // if (docSnap3.exists()) {
+        //   const data3 = docSnap3.data();
+        //   const Liked_Users = data3.Liked_Users || [];
+        //   for(let i = 0; i < Liked_Users.length; i++) {
+          
+        //     // user has liked this so dont let him like again
+        //     if(Liked_Users[i] == this.userEmail) {
+        //       tempLike = true;
+        //     }
+
+        //     // get the number of likes for this plan
+        //     likeCount = await this.getNumLikes(element);
+        //   } 
+
+        //   // for those plans find out number of likes for that plan as well
+
+        //   // along with plan details pass in if user has liked this or not
+          
+        // } else {
+        //   // await setDoc(doc(db, "Likes", element), {
+        //   //   Liked_Users: []
+        //   // })
+
+        // }
+        // let deets = (await getDoc(doc(db, "Plans", element))).data();
+        //   deets.liked = tempLike
+        //   deets.likeCount = likeCount;
+        //   deets.displayPic = deets.Pictures.length > 0 ? deets.Pictures[0] : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"
+        //   console.log(deets)
+        //   this.result.push(deets)
+
+      // });
+      function compare(a, b) {
+        if (a.likeCount < b.likeCount)
+          return 1;
+        if (a.likeCount > b.likeCount)
+          return -1;
+        return 0;
+      }
       console.log(this.result);
+      this.copy = this.result.slice();
+      this.temp = this.copy.sort(compare).slice(0, 3);
+
     },
     async toggleHeart(planName) {
       const docRef = doc(db, "Users", this.userEmail);
@@ -156,7 +220,7 @@ export default {
         this.favorites = [];
       // refresh the rest
         this.fetchAndUpdateData(String(this.userEmail));
-        this.fetchPlans();
+        // this.fetchPlans();
         
       }
     },
