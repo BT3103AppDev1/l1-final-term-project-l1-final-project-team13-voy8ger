@@ -26,7 +26,11 @@
       </div>
       <div>
         <label for="bio" class="mr-2">Bio:</label>
-        <textarea id="bio" v-model="bio" class="form-control border mb-2"></textarea>
+        <textarea
+          id="bio"
+          v-model="bio"
+          class="form-control border mb-2"
+        ></textarea>
       </div>
       <v-btn @click="updateProfile">Save Changes</v-btn>
     </form>
