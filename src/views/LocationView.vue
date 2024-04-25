@@ -30,10 +30,10 @@ export default {
       <GoogleMap
         api-key="AIzaSyB91PgHyhp9tvua_eCT5eiiqSQxXTcZoe0"
         style="width: 100%; height: 500px; margin-top: 10%;"
-        :center="this.center"
+        :center="center"
         :zoom="15"
         >
-            <Marker :options="{ position: this.center }" />
+            <Marker :options="{ position: center }" />
         </GoogleMap>
     </div>
 </template>

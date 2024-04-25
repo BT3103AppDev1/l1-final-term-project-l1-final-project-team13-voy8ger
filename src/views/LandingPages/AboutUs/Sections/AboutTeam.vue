@@ -6,7 +6,11 @@ import HorizontalTeamCard from "@/examples/cards/teamCards/HorizontalTeamCard.vu
 import emma from "@/assets/img/team-5.jpg";
 import william from "@/assets/img/bruce-mars.jpg";
 import ivana from "@/assets/img/ivana-squares.jpg";
-import marquez from "@/assets/img/ivana-square.jpg";
+import coco from "@/assets/img/coco.png";
+import KJ from "@/assets/img/KJ.png";
+import Ram from "@/assets/img/Ram.png";
+import JL from "@/assets/img/JL.png";
+import HJ from "@/assets/img/HJ.png";
 </script>
 
 <template>
@@ -29,9 +33,9 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-4"
-            :image="william"
+            :image="KJ"
             :profile="{ name: 'FONG KAI JUN', link: 'javascript:;' }"
-            :position="{ label: 'Developer', color: 'success' }"
+            :position="{ label: 'Developer / SCRUM Master', color: 'success' }"
             description="Kai Jun is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
@@ -39,9 +43,9 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-lg-4 mt-5"
-            :image="william"
+            :image="Ram"
             :profile="{ name: 'GOPAL RADHAKRISHNAN RAMANEN BHARATWA', link: 'javascript:;' }"
-            :position="{ label: 'Developer', color: 'success' }"
+            :position="{ label: 'Developer ? Product Owner', color: 'success' }"
             description="Ramanen is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
@@ -52,7 +56,7 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-4 z-index-2"
-            :image="william"
+            :image="JL"
             :profile="{ name: 'JERON LIAW XUAN JUN', link: 'javascript:;' }"
             :position="{ label: 'Developer', color: 'success' }"
             description="Jeron is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
@@ -61,10 +65,10 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-lg-4 mt-5 z-index-2"
-            :image="ivana"
+            :image="coco"
             :profile="{ name: 'COCO LI XINRUI', link: 'javascript:;' }"
             :position="{ label: 'Developer', color: 'success' }"
-            description="Coco is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
+            description="Coco is a seasoned software developer proficient in various programming languages and frameworks. She stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
 
@@ -75,10 +79,10 @@ import marquez from "@/assets/img/ivana-square.jpg";
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-lg-4 mt-5 z-index-2"
-            :image="ivana"
+            :image="HJ"
             :profile="{ name: 'LAI HSUAN JUNG', link: 'javascript:;' }"
             :position="{ label: 'Developer', color: 'success' }"
-            description="Hsuan Jung is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
+            description="Hsuan Jung is a seasoned software developer proficient in various programming languages and frameworks. She stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
 

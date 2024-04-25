@@ -5,7 +5,6 @@ import { onMounted } from "vue";
 import NavbarDefault from "@/components/NavbarDefault.vue";
 import DefaultFooter from "@/components/FooterDefault.vue";
 
-
 //image
 import image from "@/assets/img/illustrations/illustration-signin.jpg";
 
@@ -14,18 +13,28 @@ import MaterialInput from "@/components/MaterialInput.vue";
 import MaterialTextArea from "@/components/MaterialTextArea.vue";
 import MaterialButton from "@/components/MaterialButton.vue";
 
-
 // material-input
 import setMaterialInput from "@/assets/js/material-input";
 onMounted(() => {
   setMaterialInput();
 });
 
+// Toaster
+import { createToaster } from "@meforma/vue-toaster";
+const toaster = createToaster({
+  position: "top",
+  dismissable: "true",
+  maxToasts: 1,
+});
 
-
+const sendMessage = () => {
+  toaster.success("Inquiry sent", {
+    position: "top",
+  });
+};
 </script>
 <template>
-  <NavbarDefault/>
+  <NavbarDefault />
   <section>
     <div class="page-header min-vh-100">
       <div class="container">
@@ -54,14 +63,14 @@ onMounted(() => {
                 <div
                   class="bg-gradient-success shadow-success border-radius-lg p-3"
                 >
-                  <h3 class="text-white text-success mb-0">Contact us</h3>
+                  <h3 class="text-white mb-0">Contact us</h3>
                 </div>
               </div>
               <div class="card-body">
                 <p class="pb-3">
                   For further questions, including partnership opportunities,
-                  please email hello@voy8ger.com or contact using our
-                  contact form.
+                  please email hello@voy8ger.com or contact using our contact
+                  form.
                 </p>
                 <form id="contact-form" method="post" autocomplete="off">
                   <div class="card-body p-0 my-3">
@@ -94,16 +103,13 @@ onMounted(() => {
                     </div>
                     <div class="row">
                       <div class="col-md-12 text-center">
-                        
-                        
                         <MaterialButton
                           variant="gradient"
                           color="success"
                           class="mt-3 mb-0"
-                          
+                          @click.prevent="sendMessage"
                           >Send Message</MaterialButton
                         >
-                        
                       </div>
                     </div>
                   </div>

@@ -18,11 +18,11 @@
           <h4>{{ user.name }}</h4>
         </div>
         <div class="d-flex flex-column align-items-center p-2">
-          <div class="p-2">{{ this.user.plans.length }}</div>
+          <div class="p-2">{{ user.plans.length }}</div>
           <h6>created</h6>
         </div>
         <div class="d-flex flex-column align-items-center p-2">
-          <div class="p-2">{{ this.user.saved.length }}</div>
+          <div class="p-2">{{ user.saved.length }}</div>
           <h6>favourited</h6>
         </div>
         <div class="w-50 p-2">
