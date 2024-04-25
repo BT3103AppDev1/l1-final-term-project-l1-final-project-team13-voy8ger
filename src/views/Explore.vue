@@ -191,7 +191,7 @@ export default {
           this.tempArray = this.allPlans.slice();
           this.temp = this.tempArray.slice(0, this.length);
         } else {
-          this.$toast.error(`No more plans :(`);
+          this.$toast.error(`All plans viewed, start a new voy8ge today!`);
         }
       } else {
         this.$router.push({
