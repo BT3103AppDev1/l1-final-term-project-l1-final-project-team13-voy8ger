@@ -74,7 +74,6 @@ export default {
   async mounted() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if (user) {
         this.user.email = user.email;
         this.fetchUserData();
