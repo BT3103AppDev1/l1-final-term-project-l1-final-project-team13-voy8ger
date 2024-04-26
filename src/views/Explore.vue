@@ -191,6 +191,8 @@ export default {
           this.tempArray = this.allPlans.slice();
           this.temp = this.tempArray.slice(0, this.length);
         } else {
+          this.tempArray = this.allPlans.slice();
+          this.temp = this.tempArray.slice(0, this.allPlans.length);
           this.$toast.error(`All plans viewed, start a new voy8ge today!`);
         }
       } else {
