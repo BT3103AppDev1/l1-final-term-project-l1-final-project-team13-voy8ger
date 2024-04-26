@@ -9,7 +9,7 @@ import {
   getDoc,
   doc,
   updateDoc,
-setDoc,
+  setDoc,
 } from "firebase/firestore";
 </script>
 <script>
@@ -25,7 +25,7 @@ export default {
       favorites: [],
       length: 3,
       liked: [],
-      result:[],
+      result: [],
     };
   },
   mounted() {
@@ -37,39 +37,40 @@ export default {
         this.fetchPlans();
         this.fetchAndUpdateData(this.userEmail);
         this.fetchAndUpdateLikes();
-      } 
+      }
     });
   },
 
   methods: {
-
     async fetchAndUpdateData(userEmail) {
       // get saved plan list of the user
       const docRef = doc(db, "Users", String(this.userEmail));
       const docSnap = await getDoc(docRef);
-      console.log(docSnap.data());
-      console.log(docSnap.data().saved_list);
 
       // get all the plans out & put it into the list temp
       const val = docSnap.data().saved_list.map(async (element) => {
         this.favorites.push(element);
       });
-
     },
 
     async fetchPlans() {
       const querySnapshot = await getDocs(collection(db, "Plans"));
-      this.allPlans = querySnapshot.docs.map((doc) => ({...doc.data(), displayPic:doc.data().Pictures.length>0 ? doc.data().Pictures[0] : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"}) );
+      this.allPlans = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        displayPic:
+          doc.data().Pictures.length > 0
+            ? doc.data().Pictures[0]
+            : "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png",
+      }));
       this.tempArray = this.allPlans.slice();
-      this.temp = this.tempArray.slice(0, this.length);  
+      this.temp = this.tempArray.slice(0, this.length);
     },
     async fetchAndUpdateLikes() {
       const querySnapshot2 = await getDocs(collection(db, "Plans"));
       this.liked = querySnapshot2.docs.map((doc) => doc.data().planId);
 
-      this.result = []
+      this.result = [];
       const val = this.liked.map(async (element) => {
-
         let tempLike = false;
         let likeCount = 0;
 
@@ -79,34 +80,29 @@ export default {
         if (docSnap3.exists()) {
           const data3 = docSnap3.data();
           const Liked_Users = data3.Liked_Users || [];
-          for(let i = 0; i < Liked_Users.length; i++) {
-          
+          for (let i = 0; i < Liked_Users.length; i++) {
             // user has liked this so dont let him like again
-            if(Liked_Users[i] == this.userEmail) {
+            if (Liked_Users[i] == this.userEmail) {
               tempLike = true;
             }
 
             // get the number of likes for this plan
             likeCount = await this.getNumLikes(element);
-          } 
+          }
 
           // for those plans find out number of likes for that plan as well
 
           // along with plan details pass in if user has liked this or not
-          
         } else {
           await setDoc(doc(db, "Likes", element), {
-            Liked_Users: []
-          })
-
+            Liked_Users: [],
+          });
         }
         let deets = (await getDoc(doc(db, "Plans", element))).data();
-          deets.liked = tempLike
-          deets.likeCount = likeCount;
-          this.result.push(deets)
-
+        deets.liked = tempLike;
+        deets.likeCount = likeCount;
+        this.result.push(deets);
       });
-
     },
     async toggleHeart(planName) {
       const docRef = doc(db, "Users", this.userEmail);
@@ -115,18 +111,16 @@ export default {
       if (docSnap.exists()) {
         const data = docSnap.data();
         const savedList = data.saved_list || [];
-        console.log(savedList);
+
         // if the plan is not already favourited, add it
         if (!savedList.includes(planName)) {
           await this.addListItem(docRef, docSnap, "saved_list", planName);
-          console.log(`Plan ${planName} added to favourites.`);
         } else {
-        // if the plan is already saved, delete it
+          // if the plan is already saved, delete it
           await this.deleteListItem(docRef, docSnap, "saved_list", planName);
-          console.log(`Plan ${planName} is removed from favourites.`);
         }
         this.favorites = [];
-      // refresh the rest
+        // refresh the rest
         this.fetchAndUpdateData(String(this.userEmail));
         this.fetchPlans();
       }
@@ -136,14 +130,24 @@ export default {
       const docRef = doc(db, "Likes", plan_Name);
       const docSnap = await getDoc(docRef);
 
-      if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
+      if (docSnap.data().Liked_Users.includes(String(this.userEmail))) {
         // remove thae users from liked it is already there
-        await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        await this.deleteListItem(
+          docRef,
+          docSnap,
+          "Liked_Users",
+          String(this.userEmail)
+        );
         // rather than finding the exact plan in temp then updating the like -> simply re get everything
         this.fetchAndUpdateLikes();
       } else {
         // add the item to their saved list
-        await this.addListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        await this.addListItem(
+          docRef,
+          docSnap,
+          "Liked_Users",
+          String(this.userEmail)
+        );
         // rather than finding the exact plan in temp then updating the like -> simply re get everything
         this.fetchAndUpdateLikes();
       }
@@ -155,14 +159,13 @@ export default {
           const data = docSnap.data();
           // Get the list from the document data
           const list = data[listFieldName];
-          
+
           // Remove the item from the list
           const updatedList = list.filter((item) => item !== itemToRemove);
           // Update the document with the modified list
           await updateDoc(docRef, {
             [listFieldName]: updatedList,
           });
-          console.log("Item removed from the list:", itemToRemove);
         } else {
           console.log("Document does not exist!");
         }
@@ -188,33 +191,30 @@ export default {
           this.tempArray = this.allPlans.slice();
           this.temp = this.tempArray.slice(0, this.length);
         } else {
-          this.$toast.error(`No more plans :(`)
+          this.$toast.error(`All plans viewed, start a new voy8ge today!`);
         }
-        
       } else {
         this.$router.push({
-        name: "LogIn",
-        
-      });
+          name: "LogIn",
+        });
       }
-      
     },
     //get the colour of the heart
     heartColor(planId) {
-      return this.favorites.includes(planId) ? 'mdi-heart':'mdi-heart-outline';
-
+      return this.favorites.includes(planId)
+        ? "mdi-heart"
+        : "mdi-heart-outline";
     },
     //get the colour of the thumbs up
     likeColor(planId) {
       for (let i = 0; i < this.result.length; i++) {
         if (this.result[i].planId == planId) {
-          return this.result[i].liked ? 'mdi-thumb-up':'mdi-thumb-up-outline';
+          return this.result[i].liked ? "mdi-thumb-up" : "mdi-thumb-up-outline";
         }
       }
-
     },
     likeNum(planId) {
-      for (let i=0; i <this.result.length;i++) {
+      for (let i = 0; i < this.result.length; i++) {
         if (this.result[i].planId == planId) {
           return this.result[i].likeCount;
         }
@@ -233,13 +233,15 @@ export default {
       }
     },
     goToSinglePlan(planId) {
-      
       // go to the singlePlan view and send the planId
       // so that details related to this plan can be retrived there
-      this.$router.push({ name: "SinglePlan", query: {
-        id: planId
-      } });
-    }
+      this.$router.push({
+        name: "SinglePlan",
+        query: {
+          id: planId,
+        },
+      });
+    },
   },
 };
 </script>
@@ -266,26 +268,27 @@ export default {
 
       <v-row>
         <v-col v-for="output in temp" cols="4">
-          
-          <v-card class="mx-auto card" max-width="300" max-height="250" v-on:click = "goToSinglePlan(output.planId)">
+          <v-card
+            class="mx-auto card"
+            max-width="300"
+            max-height="250"
+            v-on:click="goToSinglePlan(output.planId)"
+          >
             <v-img
               class="align-end text-white"
               height="150px"
-              :src= "output.displayPic"
+              :src="output.displayPic"
               cover
-              
             >
-            <v-card-title>{{ output.Plan_Name }}</v-card-title>
-          </v-img>
-
-            
+              <v-card-title>{{ output.Plan_Name }}</v-card-title>
+            </v-img>
 
             <v-row align="center">
               <v-col cols="6">
                 <v-card-text>
-                    <div>{{ likeNum(output.planId) }} likes</div>
-                    <div class="truncate">{{ output.plan_description }}</div>
-                  </v-card-text>
+                  <div>{{ likeNum(output.planId) }} likes</div>
+                  <div class="truncate">{{ output.plan_description }}</div>
+                </v-card-text>
               </v-col>
 
               <v-col cols="6">
@@ -303,9 +306,16 @@ export default {
                       heartColor(output.planId)
                     }}</v-icon>
                   </v-btn>
-                  <v-btn color="#0077B6" icon small variant="plain" size="small" @click.stop="toggleLike(output.planId)">
-                      <v-icon>{{likeColor(output.planId)}}</v-icon>
-                    </v-btn>
+                  <v-btn
+                    color="#0077B6"
+                    icon
+                    small
+                    variant="plain"
+                    size="small"
+                    @click.stop="toggleLike(output.planId)"
+                  >
+                    <v-icon>{{ likeColor(output.planId) }}</v-icon>
+                  </v-btn>
                 </v-card-actions>
               </v-col>
             </v-row>
@@ -321,7 +331,7 @@ export default {
             density="default"
             @click="loadMore()"
           >
-          {{ user ? 'load more!' : 'Sign In' }}
+            {{ user ? "load more!" : "Sign In" }}
           </v-btn>
         </v-col>
       </v-row>
@@ -337,7 +347,7 @@ export default {
   text-overflow: ellipsis;
 }
 .card:hover {
-      transform: scale(1.05); /* Increase the size slightly */
-      transition: transform 0.2s ease; /* Add a smooth transition */
+  transform: scale(1.05); /* Increase the size slightly */
+  transition: transform 0.2s ease; /* Add a smooth transition */
 }
 </style>

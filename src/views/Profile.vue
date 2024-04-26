@@ -39,42 +39,66 @@
         <p v-if="user.bio != null">{{ user.bio }}</p>
         <v-btn class="w-50 mb-5" @click="goEdit">Edit Profile</v-btn>
         <v-row>
-          <v-col v-for="output in filterer" cols="4"> 
-            <v-card class="mx-auto card" max-width="330" max-height="250" v-on:click = "goToUpdatePage(output.planId)">
-
-            <v-img
-            class="align-end text-white"
-            height="150"
-            :src="output.displayPic"
-            cover
+          <v-col v-for="output in filterer" cols="4">
+            <v-card
+              class="mx-auto card"
+              max-width="330"
+              max-height="250"
+              v-on:click="goToUpdatePage(output.planId)"
             >
+              <v-img
+                class="align-end text-white"
+                height="150"
+                :src="output.displayPic"
+                cover
+              >
+                <v-card-title>{{ output.Plan_Name }}</v-card-title>
+              </v-img>
 
-            <v-card-title >{{ output.Plan_Name }}</v-card-title>
-            </v-img>
-
-            <v-row align="center">
+              <v-row align="center">
                 <v-col cols="6">
-                    <v-card-text>
+                  <v-card-text>
                     <div>{{ output.likeCount }} likes</div>
                     <div class="truncate">{{ output.plan_description }}</div>
-                    </v-card-text>
+                  </v-card-text>
                 </v-col>
 
                 <v-col cols="6">
-                    <v-card-actions>
+                  <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="error" icon size="small" variant="plain" @click.stop="toggleHeart(output.planId)">
-                        <v-icon>{{ user.saved.includes(output.planId) ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+                    <v-btn
+                      color="error"
+                      icon
+                      size="small"
+                      variant="plain"
+                      @click.stop="toggleHeart(output.planId)"
+                    >
+                      <v-icon>{{
+                        user.saved.includes(output.planId)
+                          ? "mdi-heart"
+                          : "mdi-heart-outline"
+                      }}</v-icon>
                     </v-btn>
 
-                    <v-btn color="#0077B6" icon small variant="plain" size="small" @click.stop="toggleLike(output.planId)">
-                      <v-icon>{{output.AllowLike ? 'mdi-thumb-up-outline':'mdi-thumb-up'}}</v-icon>
+                    <v-btn
+                      color="#0077B6"
+                      icon
+                      small
+                      variant="plain"
+                      size="small"
+                      @click.stop="toggleLike(output.planId)"
+                    >
+                      <v-icon>{{
+                        output.AllowLike
+                          ? "mdi-thumb-up-outline"
+                          : "mdi-thumb-up"
+                      }}</v-icon>
                     </v-btn>
-                    </v-card-actions>
+                  </v-card-actions>
                 </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
         </v-row>
       </div>
     </v-container>
@@ -123,7 +147,6 @@ export default {
   async mounted() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if (user) {
         this.user.email = user.email;
         this.fetchAndUpdateData(this.user.email);
@@ -166,15 +189,24 @@ export default {
       const docRef = doc(db, "Likes", plan_Name);
       const docSnap = await getDoc(docRef);
 
-      if(docSnap.data().Liked_Users.includes(String(this.user.email))) {
-        // remove users from liked 
-        await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.user.email));
+      if (docSnap.data().Liked_Users.includes(String(this.user.email))) {
+        // remove users from liked
+        await this.deleteListItem(
+          docRef,
+          docSnap,
+          "Liked_Users",
+          String(this.user.email)
+        );
 
         this.fetchAndUpdateData(this.user.email);
-
       } else {
         // add users to liked
-        await this.addListItem(docRef, docSnap, "Liked_Users", String(this.user.email));
+        await this.addListItem(
+          docRef,
+          docSnap,
+          "Liked_Users",
+          String(this.user.email)
+        );
 
         this.fetchAndUpdateData(this.user.email);
       }
@@ -187,14 +219,12 @@ export default {
           const data = docSnap.data();
           // Get the list from the document data
           const list = data[listFieldName];
-          console.log(list);
           // Remove the item from the list
           const updatedList = list.filter((item) => item !== itemToRemove);
           // Update the document with the modified list
           await updateDoc(docRef, {
             [listFieldName]: updatedList,
           });
-          console.log("Item removed from the list: ", itemToRemove);
         } else {
           console.log("Document does not exist!");
         }
@@ -208,15 +238,14 @@ export default {
         if (docSnap.exists()) {
           // Get the data from the document
           const existingList = docSnap.data()[listFieldName];
-          
+
           // Add the new item to the existing list
           existingList.push(itemToAdd);
 
           // Update the document with the modified list
           await updateDoc(docRef, {
-            "Liked_Users": existingList,
+            Liked_Users: existingList,
           });
-          
         } else {
           console.log("Document does not exist!");
         }
@@ -241,9 +270,6 @@ export default {
         this.user.bio = docSnap.data().bio;
       }
 
-      console.log("created: " + docSnap.data().plans_list);
-      console.log("saved: " + docSnap.data().saved_list);
-
       // refresh
       this.user.plans = [];
       // get all the plans out & put it into user.plans
@@ -253,31 +279,28 @@ export default {
         // get data if the user has liked this or not
         const docRef3 = doc(db, "Likes", e);
         const docSnap3 = await getDoc(docRef3);
-        for(let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
-        
+        for (let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
           // user has liked this so dont let him like again
-          if(docSnap3.data().Liked_Users[i] == this.user.email) {
+          if (docSnap3.data().Liked_Users[i] == this.user.email) {
             tempLike = false;
-          }          
-        } 
+          }
+        }
         let likeCount = await this.getNumLikes(e);
 
         // along with plan details pass in if user has liked this or not
         let deets = (await getDoc(doc(db, "Plans", e))).data();
-        deets.AllowLike = tempLike
+        deets.AllowLike = tempLike;
         deets.likeCount = likeCount;
         if (deets.Pictures.length > 0) {
           deets.displayPic = deets.Pictures[0];
         } else {
-          deets.displayPic = "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png";
+          deets.displayPic =
+            "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png";
         }
 
         this.user.plans.push(deets);
       });
       this.user.saved = docSnap.data().saved_list;
-
-      console.log("created temp: " + this.user.plans);
-      console.log("saved temp: " + this.user.saved);
     },
     async getNumLikes(planId) {
       const docRef = doc(db, "Likes", planId);
