@@ -70,6 +70,7 @@ export default {
       return emp_list;
     },
 
+    // validation checks
     isFormValid() {
       return (
         this.isRatingValid &&
@@ -109,8 +110,11 @@ export default {
   mounted() {},
   methods: {
     async savePlanToFs() {
-      if(this.Pictures.length == 0) {
-          this.Pictures.push("https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png");
+      // push a dummy photo if no pictures
+      if (this.Pictures.length == 0) {
+        this.Pictures.push(
+          "https://hips.hearstapps.com/hmg-prod/images/voyager-1536x864-65809736c81aa.png"
+        );
       }
 
       await this.fetchCreatorId();
@@ -157,6 +161,7 @@ export default {
           planId: docRef.id,
         });
 
+        // update the plans_list for user only after the document ID for plan is created
         const userRef = doc(db, "Users", this.creatorId);
         console.log(userRef);
         await updateDoc(userRef, {
@@ -180,6 +185,8 @@ export default {
     triggerFileUpload() {
       this.$refs.fileInput.click();
     },
+
+    // upload photo to firebase storage and push website into pictures
     async uploadPhoto(event) {
       const file = event.target.files[0];
       if (!file) return;

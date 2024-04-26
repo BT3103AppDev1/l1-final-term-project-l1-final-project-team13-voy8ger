@@ -151,10 +151,10 @@ export default {
 
         // error handling of passwords
         if (this.password != this.confirmedPassword) {
-          this.error = "Your password doesn't match just like your face";
+          this.error = "The 2 passwords doesn't match";
           throw this.error;
         } else if (this.password.length < 6) {
-          this.error = "Length of password is too small just like ur";
+          this.error = "Ensure that the password is min 6 characters";
           throw this.error;
         }
         // if no errors/things to flag in user input

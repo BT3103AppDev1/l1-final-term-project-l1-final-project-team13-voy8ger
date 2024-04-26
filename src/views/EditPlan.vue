@@ -21,6 +21,8 @@ import {
   updateDoc,
   deleteDoc,
   arrayRemove,
+  collection,
+  getDocs,
 } from "firebase/firestore";
 const toaster = createToaster({
   position: "top",
@@ -28,10 +30,16 @@ const toaster = createToaster({
   maxToasts: 1,
 });
 
+// Route to pass in plan ID
 const route = useRoute();
+
+// router to push to profile after updating / delete
 const router = useRouter();
+
 const planId = vueRef(route.params.planId);
 const fileInputRef = vueRef(null);
+
+// initialise planData according to firebase configs and set as placeholder values first
 const planData = reactive({
   Plan_Name: "",
   numberOfVoyagers: 0,
@@ -56,6 +64,7 @@ onMounted(() => {
   fetchPlanDetails();
 });
 
+// Pull and update information of planData
 async function fetchPlanDetails() {
   if (!planId.value) {
     console.error("Plan ID is required.");
@@ -66,12 +75,12 @@ async function fetchPlanDetails() {
     const planDocSnap = await getDoc(planDocRef);
     if (planDocSnap.exists()) {
       Object.assign(planData, planDocSnap.data());
+      // convert timestamp form minutes / seconds to date to be used in date picker
       planData.Date = new Date(planData.Date.seconds * 1000);
-
-      planDocSnap.data().location_list.map(val => {
-        planData.just_location_list.push(val.route)
-      })
-
+      // convert location list that contains lat log and route to route for display
+      planDocSnap.data().location_list.map((val) => {
+        planData.just_location_list.push(val.route);
+      });
     } else {
       console.error("No such plan!");
     }
@@ -82,15 +91,11 @@ async function fetchPlanDetails() {
 
 function getAddressData(addressData) {
   planData.address = addressData;
-  // planData.location_list.push({
-  //   latitude: addressData.latitude,
-  //   longitude: addressData.longitude,
-  //   route: addressData.route,
-  // });
   console.log(planData.address);
   console.log(addressData);
 }
 
+// perform validation checks to prevent un-intended values from being updated
 const validations = {
   isRatingValid: computed(
     () => planData.creator_rating >= 0 && planData.creator_rating <= 5
@@ -111,6 +116,7 @@ const validations = {
   ),
 };
 
+// If passed all validations, update doc on firestore, else throw a toast error
 async function updatePlan() {
   if (!validations.isFormValid.value) {
     if (!validations.isPlanNameValid.value) {
@@ -149,6 +155,7 @@ function togglePlanCompleted() {
   planData.status = !planData.status;
 }
 
+// upload photo into Firebase storage and then push url link into Pictures
 async function uploadPhoto(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -172,6 +179,7 @@ function removePicture(index) {
   planData.Pictures.splice(index, 1);
 }
 
+// Delete plan but also need to delete document form likes and remove form users list of created plans as well
 async function deletePlan() {
   if (
     confirm(
@@ -187,7 +195,16 @@ async function deletePlan() {
       await updateDoc(userDocRef, {
         plans_list: arrayRemove(planId.value),
       });
-
+      // Retrieve all user documents
+      const usersRef = collection(db, "Users");
+      const querySnapshot = await getDocs(usersRef);
+      querySnapshot.forEach(async (d) => {
+        // Update each user document to remove the planId from their saved_list
+        const userDocRef = doc(db, "Users", d.id);
+        await updateDoc(userDocRef, {
+          saved_list: arrayRemove(planId.value),
+        });
+      });
       toaster.success("Plan deleted successfully!");
       router.push({ name: "Profile" });
     } catch (error) {
