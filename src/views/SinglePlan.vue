@@ -379,7 +379,14 @@ export default {
           </v-row>
 
           <!-- add spending logic - aka for certain range of spending cost is this much -->
-          <div class="my-4 text-subtitle-1">$ • Italian, Cafe</div>
+          <!-- Spending Logic: Display spending if reviewed, otherwise indicate not reviewed -->
+          <div class="my-4 text-subtitle-1">
+            {{
+              plan.creator_spending > 0
+                ? `Total Spending: $${plan.creator_spending}`
+                : "Not reviewed yet"
+            }}
+          </div>
 
           <!-- Location List -->
           <div class="my-4">
