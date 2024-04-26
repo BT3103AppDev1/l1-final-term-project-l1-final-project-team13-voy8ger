@@ -6,29 +6,26 @@
         <v-row class="mt-15" justify="center">
           <h1 class="text-black pt-3 mt-n5 me-2 text-center">Analytics</h1>
         </v-row>
-          <v-row class="mt-15" justify="center">
+        <v-row class="mt-15" justify="center">
           <v-col cols="5">
-            <br>
+            <br />
             <h3 class="text-black pt-3 mt-n5 me-2 text-center">
-              
-            Plans Created: {{ plansCreated }}
-          </h3>
+              Plans Created: {{ plansCreated }}
+            </h3>
           </v-col>
           <v-col cols="1">
-            <div class="divider"></div> <!-- Add a divider -->
+            <div class="divider"></div>
+            <!-- Add a divider -->
           </v-col>
-          <v-col cols="1">
-            
-          </v-col>
+          <v-col cols="1"> </v-col>
           <v-col cols="5" justify="center" align="center">
-            <br>
-            <h3 class="text-black pt-3 mt-n5 me-2 text-center" >
-            Total Spending: ${{ chartData.thisMonth + chartData.lastMonth }}
-          </h3>
+            <br />
+            <h3 class="text-black pt-3 mt-n5 me-2 text-center">
+              Total Spending: ${{ chartData.thisMonth + chartData.lastMonth }}
+            </h3>
           </v-col>
         </v-row>
         <v-row class="mt-15" justify="center">
-          
           <!-- Render the BarChart only when dataReady is true -->
           <BarChart :chart-data-external="chartData" v-if="chartDataReady" />
         </v-row>
@@ -45,7 +42,7 @@ import BarChart from "../components/Chart.vue"; // Corrected import statement
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebase.js";
 import { doc, getDoc } from "firebase/firestore";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive } from "vue";
 
 // get the user
 const auth = getAuth();

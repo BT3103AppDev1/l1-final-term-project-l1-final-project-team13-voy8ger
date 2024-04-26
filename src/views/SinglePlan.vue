@@ -1,35 +1,19 @@
 <script setup>
 // firebase stuff to get user data
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { db, storage } from "../firebase.js";
-import { ref, listAll, getDownloadURL } from 'firebase/storage';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  query, where,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { db } from "../firebase.js";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 
 // misc imports
-import { onMounted, onUnmounted} from "vue";
-import { RouterLink } from "vue-router";
 import "@mdi/font/css/materialdesignicons.css";
 
 //example components
 import NavbarDefault from "../components/NavbarDefault.vue";
 import DefaultFooter from "../components/FooterDefault.vue";
-import Header from "../components/Header.vue";
-
-const menu = ref(false)
 </script>
 
 <script>
 export default {
-
   data() {
     return {
       // HTTPS link of your image
@@ -37,104 +21,122 @@ export default {
       loading: false,
       selection: 1,
 
-      plan: '',
+      plan: "",
       imageUrls: [],
       imageKey: 0,
 
-      locationSnapshot: '',
+      locationSnapshot: "",
 
       AllowFavourite: true,
       AllowLike: true,
 
-      userEmail: '',
-      userName: '',
-      likeCount: '',
+      userEmail: "",
+      userName: "",
+      likeCount: "",
       planId: this.$route.query.id,
 
-      HasPicture: true
+      HasPicture: true,
+      profilePic: "",
     };
-  }, 
-  
+  },
+
   beforeMount() {
     this.HasPicture = this.created();
     this.UpdatePlan(this.planId);
     this.likeCount = this.getNumLikes();
   },
-  
-  mounted() {
-      // get current user details
-      const auth = getAuth();
-      
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          this.userEmail = user.email;
-        }
-      });
 
-  }, methods: {
-      reserve() {
-        this.loading = true
-        setTimeout(() => (this.loading = false), 2000)
+  mounted() {
+    // get current user details
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.userEmail = user.email;
+      }
+    });
+  },
+  methods: {
+    reserve() {
+      this.loading = true;
+      setTimeout(() => (this.loading = false), 2000);
     },
 
     async UpdatePlan(planId) {
       // store this plan in a list
-      console.log(planId);
+      // console.log(planId);
       const docSnap = await getDoc(doc(db, "Plans", this.planId));
-      
+
       if (docSnap.exists()) {
         // Document data is available in docSnap.data()
 
         // having issues extracting indiv fields if we pass the whole .data() object
         // so this is an alternative
-        this.plan = {'Plan_Name':docSnap.data().Plan_Name, 
-        'creator_id': docSnap.data().creator_id,
-        'creator_rating': docSnap.data().creator_rating,
-        'creator_review': docSnap.data().creator_review,
-        'creator_spending': docSnap.data().creator_spending,
-        'location_list': docSnap.data().location_list,
-        'num_likes': docSnap.data().num_likes,
-        'creator_spending': docSnap.data().creator_spending,
-        'planId': docSnap.data().planId,
-        'plan_description': docSnap.data().plan_description,
-        'status': docSnap.data().status
-      };
+        this.plan = {
+          Plan_Name: docSnap.data().Plan_Name,
+          creator_id: docSnap.data().creator_id,
+          creator_rating: docSnap.data().creator_rating,
+          creator_review: docSnap.data().creator_review,
+          creator_spending: docSnap.data().creator_spending,
+          location_list: docSnap.data().location_list,
+          num_likes: docSnap.data().num_likes,
+          planId: docSnap.data().planId,
+          plan_description: docSnap.data().plan_description,
+          status: docSnap.data().status,
+        };
 
         // get ALL location details of that plan
-        this.locationSnapshot = []
+        this.locationSnapshot = [];
 
         // Iterate over the snapshot to access each document
-        this.plan.location_list.forEach(doc => {
-            this.locationSnapshot.push({'route':doc.route, 
-            'lat':doc.latitude, 
-            'lng':doc.longitude
+        this.plan.location_list.forEach((doc) => {
+          this.locationSnapshot.push({
+            route: doc.route,
+            lat: doc.latitude,
+            lng: doc.longitude,
           });
         });
+
+        // fetch user profile details
+        const userDocRefPic = doc(db, "Users", this.plan.creator_id);
+        const userDocSnapPic = await getDoc(userDocRefPic);
+        if (userDocSnapPic.exists()) {
+          this.userName = userDocSnapPic.data().Name;
+          const profilePictures = userDocSnapPic.data().profilePicture;
+          if (profilePictures && profilePictures.length > 0) {
+            this.profilePic = profilePictures;
+          } else {
+            this.profilePic =
+              "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460";
+          }
+        } else {
+          console.log("No such user document!");
+          this.profilePic =
+            "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460";
+        }
 
         // check if user has favourited this plan or not -> show that user has fav it
         const docRef2 = doc(db, "Users", String(this.userEmail));
         const docSnap2 = await getDoc(docRef2);
-        for(let i = 0; i < docSnap2.data().saved_list.length; i++) {
-          if(docSnap2.data().saved_list[i] == this.planId) {
+        for (let i = 0; i < docSnap2.data().saved_list.length; i++) {
+          if (docSnap2.data().saved_list[i] == this.planId) {
             this.AllowFavourite = false;
           }
-        } 
+        }
 
         // check if user has liked this plan or not -> show that user has liked it
         const docRef3 = doc(db, "Likes", this.planId);
         const docSnap3 = await getDoc(docRef3);
-        for(let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
-          if(docSnap3.data().Liked_Users[i] == this.userEmail) {
+        for (let i = 0; i < docSnap3.data().Liked_Users.length; i++) {
+          if (docSnap3.data().Liked_Users[i] == this.userEmail) {
             this.AllowLike = false;
           }
-        } 
+        }
 
         // get the plan's original user's name -> to be displayed
         const docRef4 = doc(db, "Users", String(this.plan.creator_id));
         const docSnap4 = await getDoc(docRef4);
-        this.userName = docSnap4.data().Name
-
-        
+        this.userName = docSnap4.data().Name;
       } else {
         console.log("No such document!");
       }
@@ -144,9 +146,9 @@ export default {
       // get document of that user
       const docRef = doc(db, "Users", String(this.userEmail));
       const docSnap = await getDoc(docRef);
-      console.log(docSnap.data());
+      // console.log(docSnap.data());
 
-      if(docSnap.data().saved_list.includes(planId)) {
+      if (docSnap.data().saved_list.includes(planId)) {
         // remove that plan from his favourites if it is already there
         await this.deleteListItem(docRef, docSnap, "saved_list", planId);
         // they can favourite it again
@@ -157,30 +159,39 @@ export default {
         // they cannot favourite it again
         this.AllowFavourite = false;
       }
-    }, 
+    },
 
     async toggleLike(planId) {
       // get document of that liked users from collection Likes
       const docRef = doc(db, "Likes", planId);
       const docSnap = await getDoc(docRef);
 
-      if(docSnap.data().Liked_Users.includes(String(this.userEmail))) {
+      if (docSnap.data().Liked_Users.includes(String(this.userEmail))) {
         // remove thae users from liked it is already there
-        await this.deleteListItem(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        await this.deleteListItem(
+          docRef,
+          docSnap,
+          "Liked_Users",
+          String(this.userEmail)
+        );
         // reduce num likes
         this.likeCount--;
         // they can like it again
         this.AllowLike = true;
-        
       } else {
         // add the item to their saved list
-        await this.addListItemLike(docRef, docSnap, "Liked_Users", String(this.userEmail));
+        await this.addListItemLike(
+          docRef,
+          docSnap,
+          "Liked_Users",
+          String(this.userEmail)
+        );
         // increase the number of likes shown
-        this.likeCount += 1
+        this.likeCount += 1;
         // they cannot favourite it again
         this.AllowLike = false;
       }
-    }, 
+    },
 
     async deleteListItem(docRef, docSnap, listFieldName, itemToRemove) {
       try {
@@ -210,15 +221,15 @@ export default {
         if (docSnap.exists()) {
           // Get the data from the document
           const existingList = docSnap.data()["saved_list"];
-          
+
           // Add the new item to the existing list
           existingList.push(itemToAdd);
 
           // Update the document with the modified list
           await updateDoc(docRef, {
-            "saved_list": existingList,
+            saved_list: existingList,
           });
-          console.log("Item added to the list:", itemToRemove);
+          console.log("Item added to the list:", itemToAdd);
         } else {
           console.log("Document does not exist!");
         }
@@ -234,20 +245,20 @@ export default {
 
       try {
         const docSnap5 = await getDoc(docRef5);
-        let pictures = []
-        pictures = docSnap5.data().Pictures
-        console.log(pictures)
+        let pictures = [];
+        pictures = docSnap5.data().Pictures;
+        // console.log(pictures);
 
         for (const item of pictures) {
           this.imageUrls.push(item);
         }
-      
-        return true
+
+        return true;
         //console.log(this.imageUrls);
       } catch (error) {
-        console.error('Error fetching images:', error);
+        console.error("Error fetching images:", error);
       }
-      return false
+      return false;
     },
 
     async addListItemLike(docRef, docSnap, listFieldName, itemToAdd) {
@@ -255,15 +266,15 @@ export default {
         if (docSnap.exists()) {
           // Get the data from the document
           const existingList = docSnap.data()["Liked_Users"];
-          
+
           // Add the new item to the existing list
           existingList.push(itemToAdd);
 
           // Update the document with the modified list
           await updateDoc(docRef, {
-            "Liked_Users": existingList,
+            Liked_Users: existingList,
           });
-          console.log("Item added to the list:", itemToRemove);
+          console.log("Item added to the list:", itemToAdd);
         } else {
           console.log("Document does not exist!");
         }
@@ -288,21 +299,24 @@ export default {
 
     // function to go a single Location view via routing
     // happens when you click on 1 location
-    goToSingleLocation(latitude,longitude) {
-      this.$router.push({ name: "LocationView", query: {
-        lat: latitude,
-        lng: longitude
-      } });
+    goToSingleLocation(latitude, longitude) {
+      this.$router.push({
+        name: "LocationView",
+        query: {
+          lat: latitude,
+          lng: longitude,
+        },
+      });
     },
-
-  }, computed: {
+  },
+  computed: {
     HeartColor() {
-      return this.AllowFavourite ? 'mdi-heart-outline':'mdi-heart';
+      return this.AllowFavourite ? "mdi-heart-outline" : "mdi-heart";
     },
     LikeColor() {
-      return this.AllowLike ? 'mdi-thumb-up-outline':'mdi-thumb-up';
-    }
-  }
+      return this.AllowLike ? "mdi-thumb-up-outline" : "mdi-thumb-up";
+    },
+  },
 };
 </script>
 
@@ -317,89 +331,99 @@ export default {
 
   <body>
     <div class="page-header min-vh-90">
-    <v-card 
-    class="mx-auto my-1"
-    max-width="800"
-    >
-
-    <div class="gallery-wrap" v-if="(imageUrls.length > 0) || (HasPicture == true)">
-      <div class = "gallery">
-      <v-carousel>
-          <v-carousel-item v-for="(imageUrl,i) in imageUrls" :key="i">
-            <img :src="imageUrl" alt="img" height="100%"/>
-          </v-carousel-item>
-      </v-carousel>
-      </div>
-    </div>
-
-    <v-card-item>
-      <v-row align="center" dense>
-        <v-col cols="auto">
-          <v-avatar size="36px">
-            <v-img
-              alt="Avatar"
-              src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460"
-            ></v-img>
-          </v-avatar>
-        </v-col>
-        <v-col cols="auto">
-          <v-card-title>{{userName}}</v-card-title>
-        </v-col>
-      </v-row>
-    </v-card-item>
-
-    <v-card-item>
-      <v-card-title>{{plan.Plan_Name}}</v-card-title>
-    </v-card-item>
-
-    <v-card-text>
-      <v-row align="center">
-        <v-rating
-          :model-value= "plan.creator_rating" 
-          color="amber"
-          density="compact"
-          size="small"
-          half-increments
-          readonly
-        ></v-rating>
-
-        <div class="text-grey ms-4">
-          {{ plan.creator_rating }}
+      <v-card class="mx-auto my-1" max-width="800">
+        <div
+          class="gallery-wrap"
+          v-if="imageUrls.length > 0 || HasPicture == true"
+        >
+          <div class="gallery">
+            <v-carousel>
+              <v-carousel-item v-for="(imageUrl, i) in imageUrls" :key="i">
+                <img :src="imageUrl" alt="img" height="100%" />
+              </v-carousel-item>
+            </v-carousel>
+          </div>
         </div>
-      </v-row>
 
-      <!-- add spending logic - aka for certain range of spending cost is this much -->
-      <div class="my-4 text-subtitle-1">
-        $ • Italian, Cafe
-      </div>
+        <v-card-item>
+          <v-row align="center" dense>
+            <v-col cols="auto">
+              <v-avatar size="36px">
+                <v-img :src="profilePic" alt="User Profile Picture"></v-img>
+              </v-avatar>
+            </v-col>
+            <v-col cols="auto">
+              <v-card-title>{{ userName }}</v-card-title>
+            </v-col>
+          </v-row>
+        </v-card-item>
 
-      <!-- Location List -->
-      <div class="my-4">
-        <v-chip v-for="locations in locationSnapshot" class="mr-2 mb-2" @click="goToSingleLocation(locations.lat, locations.lng)" >
-          {{locations.route}}
-        </v-chip>
-      </div>
+        <v-card-item>
+          <v-card-title>{{ plan.Plan_Name }}</v-card-title>
+        </v-card-item>
 
-      <!-- plan_description -->
-      <div>{{ plan.plan_description }}</div>
-    </v-card-text>
+        <v-card-text>
+          <v-row align="center">
+            <v-rating
+              :model-value="plan.creator_rating"
+              color="amber"
+              density="compact"
+              size="small"
+              half-increments
+              readonly
+            ></v-rating>
 
-    <v-divider class="mx-4 mb-1"></v-divider>
+            <div class="text-grey ms-4">
+              {{ plan.creator_rating }}
+            </div>
+          </v-row>
 
-    <v-card-actions>
-      <v-btn color="error" icon size="small" variant="plain" @click="toggleHeart(plan.planId)">
-        <v-icon>{{ HeartColor }}</v-icon>
-      </v-btn>
-      <v-btn color="#0077B6" icon small variant="plain" size="small" @click="toggleLike(plan.planId)">
-        <v-icon>{{ LikeColor }}</v-icon>
-      </v-btn>
-      <v-card-title>{{ LikeCount() }} Likes</v-card-title>
-    </v-card-actions>
+          <!-- add spending logic - aka for certain range of spending cost is this much -->
+          <div class="my-4 text-subtitle-1">$ • Italian, Cafe</div>
 
-  </v-card>
+          <!-- Location List -->
+          <div class="my-4">
+            <v-chip
+              v-for="locations in locationSnapshot"
+              class="mr-2 mb-2"
+              @click="goToSingleLocation(locations.lat, locations.lng)"
+            >
+              {{ locations.route }}
+            </v-chip>
+          </div>
 
-  </div>
+          <!-- plan_description -->
+          <div>{{ plan.plan_description }}</div>
+        </v-card-text>
+
+        <v-divider class="mx-4 mb-1"></v-divider>
+
+        <v-card-actions>
+          <v-btn
+            color="error"
+            icon
+            size="small"
+            variant="plain"
+            @click="toggleHeart(plan.planId)"
+          >
+            <v-icon>{{ HeartColor }}</v-icon>
+          </v-btn>
+          <v-btn
+            color="#0077B6"
+            icon
+            small
+            variant="plain"
+            size="small"
+            @click="toggleLike(plan.planId)"
+          >
+            <v-icon>{{ LikeColor }}</v-icon>
+          </v-btn>
+          <v-card-title>{{ LikeCount() }} Likes</v-card-title>
+        </v-card-actions>
+      </v-card>
+    </div>
   </body>
+  <DefaultFooter />
 </template>
 
 <style scoped>
@@ -423,5 +447,4 @@ export default {
   filter: grayscale(0);
   transform: scale(1.11);
 }
-
 </style>
