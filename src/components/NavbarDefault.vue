@@ -168,37 +168,53 @@ watch(
           </li>
         -->
 
-          <li class="nav-item dropdown dropdown-hover mx-2">
+          <li class="nav-item dropdown dropdown-hover">
             <RouterLink
               :to="{ name: 'Explore' }"
               rel="tooltip"
               title="Designed and Coded by VOY8GER"
               data-placement="bottom"
-              class="nav-link d-flex cursor-pointer align-items-center"
+              class="nav-link cursor-pointer"
               >Explore</RouterLink
             >
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'CreatePlan' }"
+            <RouterLink
+              class="nav-link"
+              :to="{ name: 'CreatePlan' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
               >Create</RouterLink
             >
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'Favourites' }"
+            <RouterLink
+              class="nav-link"
+              :to="{ name: 'Favourites' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
               >Favourites</RouterLink
             >
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'Analytics' }"
+            <RouterLink
+              class="nav-link"
+              :to="{ name: 'Analytics' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
               >Analytics</RouterLink
             >
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
-            <RouterLink class="nav-link" :to="{ name: 'Profile' }"
+            <RouterLink
+              class="nav-link"
+              :to="{ name: 'Profile' }"
+              rel="tooltip"
+              title="Designed and Coded by VOY8GER"
               >Profile</RouterLink
             >
           </li>
