@@ -159,7 +159,7 @@ watch(
               >About Us</RouterLink
             >
           </li>
-          
+
           <!--
           <li v-if="!isAuthenticated" class="nav-item">
             <RouterLink class="nav-link" :to="{ name: 'ContactUs' }"
@@ -175,9 +175,8 @@ watch(
               title="Designed and Coded by VOY8GER"
               data-placement="bottom"
               class="nav-link d-flex cursor-pointer align-items-center"
+              >Explore</RouterLink
             >
-              Explore
-            </RouterLink>
           </li>
 
           <li v-if="isAuthenticated" class="nav-item">
