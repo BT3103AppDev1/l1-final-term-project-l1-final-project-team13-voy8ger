@@ -1,4 +1,8 @@
-# voyager
+# voy8ger
+
+Voy8ger is an all-in-one platform designed to enable the creation, sharing, and tracking of personalised travel and lifestyle plans. 
+
+Created by: Coco Li, Fong Kai Jun, Ramanen Bharatwa, Jeron Liaw Xuan Jun, Lai Hsuan Jung
 
 This template should help get you started developing with Vue 3 in Vite.
 

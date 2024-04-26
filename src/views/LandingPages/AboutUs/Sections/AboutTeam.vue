@@ -21,15 +21,10 @@ import HJ from "@/assets/img/HJ.png";
           <h3 class="text-white z-index-1 position-relative">
             The Executive Team
           </h3>
-
-          
-
         </div>
-
       </div>
 
       <div class="row">
-
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-4"
@@ -44,12 +39,14 @@ import HJ from "@/assets/img/HJ.png";
           <HorizontalTeamCard
             class="mt-lg-4 mt-5"
             :image="Ram"
-            :profile="{ name: 'GOPAL RADHAKRISHNAN RAMANEN BHARATWA', link: 'javascript:;' }"
-            :position="{ label: 'Developer ? Product Owner', color: 'success' }"
+            :profile="{
+              name: 'GOPAL RADHAKRISHNAN RAMANEN BHARATWA',
+              link: 'javascript:;',
+            }"
+            :position="{ label: 'Developer / Product Owner', color: 'success' }"
             description="Ramanen is a seasoned software developer proficient in various programming languages and frameworks. He stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
-
       </div>
 
       <div class="row mt-4">
@@ -71,11 +68,9 @@ import HJ from "@/assets/img/HJ.png";
             description="Coco is a seasoned software developer proficient in various programming languages and frameworks. She stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
-
       </div>
 
       <div class="row mt-4">
-        
         <div class="col-lg-6 col-12">
           <HorizontalTeamCard
             class="mt-lg-4 mt-5 z-index-2"
@@ -85,10 +80,7 @@ import HJ from "@/assets/img/HJ.png";
             description="Hsuan Jung is a seasoned software developer proficient in various programming languages and frameworks. She stays at the forefront of industry trends, constantly seeking to expand his knowledge and expertise."
           />
         </div>
-
       </div>
-
-      
     </div>
   </section>
 </template>
